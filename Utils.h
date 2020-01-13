@@ -1,27 +1,31 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
 #include <Windows.h>
 #include <chrono>
 #include <vector>
-#include <cmath>
 #include <SDL2/SDL.h>
 using Float = double;
 using Vector = glm::tvec3<Float>;
+template <typename float_t>
+constexpr float_t const_pow(float_t x, int y)
+{
+    if (y==1)
+        return x;
+    else
+        return x*const_pow(x,y-1);
+}
 
 class Star;
 class Block;
 
-#define LIGHT_YEAR	(9.461 * pow(10, 15))	// Année lumière (en mètres)
-#define PI			3.14159265				// Pi
-#define G			0.00000000006674		// Constante gravitationnelle (en newton mètre carré par kilogramme carré)
-#define HEIGHT		1080.					// Hauteur de la fenêtre (en pixels)
-#define WIDTH		1920.					// Largeur de la fenêtre (en pixels)
-#define SOLAR_MASS	(1.989 * pow(10, 30))	// Masse solaire (en kilogrammes)
-#define YEAR		31536000.				// Année (en secondes)
-
+constexpr Float LIGHT_YEAR = (9.461 * const_pow<Float>(10, 15));
+constexpr Float PI = 3.14159265;
+constexpr Float G = 0.00000000006674;
+constexpr Float HEIGHT = 1080.;
+constexpr Float WIDTH = 1920.;
+constexpr Float SOLAR_MASS = (1.989 * const_pow<Float>(10, 30));
+constexpr Float YEAR = 31536000.;
 
 
 enum View { default_view, xy, xz, yz };		// Vues possibles de la simulation
