@@ -27,7 +27,7 @@ public:
 	int					index;			// Indice du bloc
 	bool				as_children;	// Présence de blocs enfants
 	bool				as_parents;		// Présence de blocs parents
-	std::vector<int>	parents;		// Indice des blocs parents
+	int					parent;		// Indice des blocs parents
 	int					children[8];		// Indice des blocs enfants
 	Vector				position;		// Position du bloc
 	Float				mass;			// Masse contenue dans le bloc (en kilogrames)

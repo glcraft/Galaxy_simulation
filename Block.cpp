@@ -24,7 +24,6 @@ Block::Block()
 	index = 0;
 	as_children = false;
 	as_parents = false;
-	parents.clear();
 	position = Vector(0., 0., 0.);
 	mass = 0.;
 	size = 0.;
@@ -42,7 +41,7 @@ Block::Block(const Block& block)
 	index = block.index;
 	as_children = block.as_children;
 	as_parents = block.as_parents;
-	parents = block.parents;
+	parent = block.parent;
 	std::copy(std::begin(block.children), std::end(block.children), children);
 	position = block.position;
 	mass = block.mass;
@@ -66,12 +65,12 @@ void Block::stars_maj(std::vector<Star>& galaxy, std::vector<Block>& blocks)
 {
 	stars.clear();
 
-	for (int i = 0; i < blocks.at(parents.at(parents.size() - 1)).stars.size(); i++)
+	for (int i = 0; i < blocks[parent].stars.size(); i++)
 	{
-		if (is_in(*this, galaxy.at(blocks.at(parents.at(parents.size() - 1)).stars[i])))
+		if (is_in(*this, galaxy[blocks[parent].stars[i]]))
 		{
-			stars.push_back(blocks.at(parents.at(parents.size() - 1)).stars[i]);
-			galaxy.at(blocks.at(parents.at(parents.size() - 1)).stars[i]).block_index = index;
+			stars.push_back(blocks[parent].stars[i]);
+			galaxy[blocks[parent].stars[i]].block_index = index;
 
 			if (!(as_stars))
 				as_stars = true;
@@ -108,8 +107,7 @@ void Block::divide(int& index_value, std::vector<Star>& galaxy, std::vector<Bloc
 	Block block;
 
 	block.as_parents = true;
-	block.parents = parents;
-	block.parents.push_back(index);
+	block.parent = index;
 	block.size = size / 2.;
 
 	Vector posis[] = {
