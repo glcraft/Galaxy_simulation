@@ -1,6 +1,6 @@
 #include "Block.h"
 #include "Utils.h"
-#include "Vector.h"
+#include <glm/glm.hpp>
 #include "Star.h"
 #include <iostream>
 #include <stdlib.h>
@@ -18,13 +18,13 @@
 Star::Star()
 {
 	is_alive = false;
-	previous_position = Vector(0., 0., 0.);
-	position = Vector(0., 0., 0.);
-	speed = Vector(0., 0., 0.);
-	acceleration = Vector(0., 0., 0.);
+	previous_position = Vector(0.f);
+	position = Vector(0.f);
+	speed = Vector(0.f);
+	acceleration = Vector(0.f);
 	color = RGB(0, 0, 0);
-	mass = 0.;
-	density = 0.;
+	mass = 0.f;
+	density = 0.f;
 	index = 0;
 	block_index = 0;
 }
@@ -33,14 +33,14 @@ Star::Star()
 
 // Construit une étoile à des coordonnées aléatoires dans la zone
 
-Star::Star(const double& initial_speed, const double& area, const double& step, const double& galaxy_thickness)
+Star::Star(const Float& initial_speed, const Float& area, const Float& step, const Float& galaxy_thickness)
 {
 	is_alive = true;
 	position = create_spherical((sqrt(random_double(0., 1.)) - 0.5) * area, random_double(0., 2. * PI), PI / 2.);
 	position.z = ((random_double(0., 1.) - 0.5) * (area * galaxy_thickness));
-	speed = create_spherical((((area / 2.) - position.get_radius()) / (area / 2.)) * initial_speed, position.get_phi() + PI / 2., PI / 2.);
+	speed = create_spherical((((area / 2.) - glm::length(position)) / (area / 2.)) * initial_speed, get_phi(position) + PI / 2., PI / 2.);
 	previous_position = position - speed * step;
-	acceleration = Vector(0., 0., 0.);
+	acceleration = Vector(0.f);
 	color = RGB(0, 0, 0);
 	mass = 0.;
 	density = 0.;
@@ -88,13 +88,13 @@ void Star::operator=(const Star& star)
 
 // Met à jour la position
 
-void Star::position_maj(const double& step, const bool& verlet_integration)
+void Star::position_maj(const Float& step, const bool& verlet_integration)
 {
 	if (verlet_integration)
 	{
 		Vector temp = position;
 
-		position = 2. * position - previous_position + acceleration * step * step; // Intégration de Verlet
+		position = static_cast<Float>(2) * position - previous_position + acceleration * step * step; // Intégration de Verlet
 		previous_position = temp;
 	}
 
@@ -106,7 +106,7 @@ void Star::position_maj(const double& step, const bool& verlet_integration)
 
 // Met à jour la vitesse
 
-void Star::speed_maj(const double& step, const double& area)
+void Star::speed_maj(const Float& step, const Float& area)
 {
 	speed += acceleration * step;
 }
@@ -115,25 +115,25 @@ void Star::speed_maj(const double& step, const double& area)
 
 // Met à jour l'accélération et la densité
 
-void Star::acceleration_and_density_maj(const double& precision, const std::vector<Star>& galaxy, const std::vector<Block>& blocks)
+void Star::acceleration_and_density_maj(const Float& precision, const std::vector<Star>& galaxy, const std::vector<Block>& blocks)
 {
 	density = 0.;
-	double max_acceleration = 0.0000000005; // Permet de limiter l'erreur due au pas de temps (à régler en fonction du pas de temps)
+	Float max_acceleration = 0.0000000005; // Permet de limiter l'erreur due au pas de temps (à régler en fonction du pas de temps)
 
 	acceleration = force_and_density_calculation(precision, *this, blocks, 0); // Pas de division par la masse de l'étoile (c.f. ligne 131)
 
-	if (acceleration.get_radius() > max_acceleration)
-		acceleration = create_spherical(max_acceleration, acceleration.get_phi(), acceleration.get_theta());
+	if (glm::length(acceleration) > max_acceleration)
+		acceleration = create_spherical(max_acceleration, get_phi(acceleration), get_theta(acceleration));
 }
 
 
 
 // Calcule la densité et la force exercée sur une étoile (divisée par la masse de l'étoile pour éviter des calculs inutiles)
 
-Vector force_and_density_calculation(const double& precision, Star& star, const std::vector<Block>& blocks, int index)
+Vector force_and_density_calculation(const Float& precision, Star& star, const std::vector<Block>& blocks, int index)
 {
-	Vector force = Vector(0., 0., 0.);
-	double distance = get_distance(star.position, blocks.at(index).mass_center);
+	Vector force = Vector(0.f);
+	Float distance = glm::distance(star.position, blocks.at(index).mass_center);
 
 	if (!(blocks.at(index).as_children) && index != star.block_index)
 	{
@@ -163,7 +163,7 @@ Vector force_and_density_calculation(const double& precision, Star& star, const 
 
 // Met à jour la couleur
 
-void Star::color_maj(const std::vector <Star>& galaxy, const double& zoom, double& area, const std::vector<Block>& blocks)
+void Star::color_maj(const std::vector <Star>& galaxy, const Float& zoom, Float& area, const std::vector<Block>& blocks)
 {
 	int color_nb = density / 3.;
 
@@ -181,7 +181,7 @@ void Star::color_maj(const std::vector <Star>& galaxy, const double& zoom, doubl
 
 // Initialise la galaxie
 
-void initialize_galaxy(std::vector<Star>& galaxy, const int& stars_number, const double& area, const double& initial_speed, const double& step, const bool& is_black_hole, const double& black_hole_mass, const double& galaxy_thickness)
+void initialize_galaxy(std::vector<Star>& galaxy, const int& stars_number, const Float& area, const Float& initial_speed, const Float& step, const bool& is_black_hole, const Float& black_hole_mass, const Float& galaxy_thickness)
 {
 	for (int i = 0; i <= stars_number * 0.764; i++)
 	{
@@ -234,8 +234,8 @@ void initialize_galaxy(std::vector<Star>& galaxy, const int& stars_number, const
 	if (is_black_hole)
 	{
 		galaxy.push_back(Star(initial_speed, area, step, galaxy_thickness));
-		galaxy.at(galaxy.size() - 1).position = Vector(0., 0., 0.);
-		galaxy.at(galaxy.size() - 1).speed = Vector(0., 0., 0.);
+		galaxy.at(galaxy.size() - 1).position = Vector(0.f);
+		galaxy.at(galaxy.size() - 1).speed = Vector(0.f);
 		galaxy.at(galaxy.size() - 1).mass = black_hole_mass;
 		galaxy.at(galaxy.size() - 1).color = RGB(0, 0, 0);
 		galaxy.at(galaxy.size() - 1).index = galaxy.size() - 1;

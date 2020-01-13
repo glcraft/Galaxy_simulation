@@ -1,31 +1,39 @@
-#ifndef UTILS_H
-#define UTILS_H
-#include "Star.h"
+#pragma once
+#include <glm/glm.hpp>
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
 #include <Windows.h>
 #include <chrono>
-#include <thread>
 #include <vector>
 #include <cmath>
-#include "SDL.h"
+#include <SDL2/SDL.h>
+using Float = double;
+using Vector = glm::tvec3<Float>;
 
-#define LIGHT_YEAR	(9.461 * pow(10, 15))	// Année lumière (en mètres)
+class Star;
+class Block;
+
+#define LIGHT_YEAR	(9.461 * pow(10, 15))	// AnnÃ©e lumiÃ¨re (en mÃ¨tres)
 #define PI			3.14159265				// Pi
-#define G			0.00000000006674		// Constante gravitationnelle (en newton mètre carré par kilogramme carré)
-#define HEIGHT		1080.					// Hauteur de la fenêtre (en pixels)
-#define WIDTH		1920.					// Largeur de la fenêtre (en pixels)
+#define G			0.00000000006674		// Constante gravitationnelle (en newton mÃ¨tre carrÃ© par kilogramme carrÃ©)
+#define HEIGHT		1080.					// Hauteur de la fenÃªtre (en pixels)
+#define WIDTH		1920.					// Largeur de la fenÃªtre (en pixels)
 #define SOLAR_MASS	(1.989 * pow(10, 30))	// Masse solaire (en kilogrammes)
-#define YEAR		31536000.				// Année (en secondes)
+#define YEAR		31536000.				// AnnÃ©e (en secondes)
+
+
 
 enum View { default_view, xy, xz, yz };		// Vues possibles de la simulation
 
 extern SDL_Renderer* renderer;
 
 int random_int(const int& min, const int& max);
-double random_double(const double& min, const double& max);
-void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const double& area, const double& zoom, const View& view);
-void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, const double& area, const double& zoom, const View& view);
-
-#endif
+Float random_double(const Float& min, const Float& max);
+void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);
+void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);
+Vector create_spherical(const Float& radius, const Float& phi, const Float& theta);
+Float get_phi(Vector vector);
+Float get_theta(Vector vector);
+Float get_phi(Vector point_1, Vector point_2);
+Float get_theta(Vector point_1, Vector point_2);

@@ -1,6 +1,6 @@
-#include "Block.h"
 #include "Utils.h"
-#include "Vector.h"
+#include "Block.h"
+#include <glm/glm.hpp>
 #include "Star.h"
 #include <iostream>
 #include <stdlib.h>
@@ -10,7 +10,8 @@
 #include <thread>
 #include <vector>
 #include <cmath>
-#include <time.h>#include "SDL.h"
+#include <time.h>
+#include "SDL.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -19,26 +20,26 @@ int main(int argc, char* argv[])
 {
 
 
-	// ------------------------- Paramètres de la simulation -------------------------
+	// ------------------------- Paramï¿½tres de la simulation -------------------------
 
 
 
-	double	area = 500.;				// Taille de la zone d'apparition des étoiles (en années lumière)
-	double	galaxy_thickness = 0.05;	// Epaisseur de la galaxie (en "area")
-	double	precision = 0.5;			// Précision du calcul de l'accélération (algorithme de Barnes–Hut)
-	bool	verlet_integration = true;	// Utiliser l'intégration de Verlet au lieu de la méthode d'Euler
+	Float	area = 500.;				// Taille de la zone d'apparition des ï¿½toiles (en annï¿½es lumiï¿½re)
+	Float	galaxy_thickness = 0.05;	// Epaisseur de la galaxie (en "area")
+	Float	precision = 0.5;			// Prï¿½cision du calcul de l'accï¿½lï¿½ration (algorithme de Barnesï¿½Hut)
+	bool	verlet_integration = true;	// Utiliser l'intï¿½gration de Verlet au lieu de la mï¿½thode d'Euler
 
-	int		stars_number = 30000;		// Nombre d'étoiles (Limité à 30 000 par les std::vector<>)
-	double	initial_speed = 2500.;		// Vitesse initiale des d'étoiles (en mètres par seconde)
-	double	black_hole_mass = 0.;		// Masse du trou noir (en masses solaires)
-	bool	is_black_hole = false;		// Présence d'un trou noir
+	int		stars_number = 30000;		// Nombre d'ï¿½toiles (Limitï¿½ ï¿½ 30 000 par les std::vector<>)
+	Float	initial_speed = 2500.;		// Vitesse initiale des d'ï¿½toiles (en mï¿½tres par seconde)
+	Float	black_hole_mass = 0.;		// Masse du trou noir (en masses solaires)
+	bool	is_black_hole = false;		// Prï¿½sence d'un trou noir
 
 	View	view = default_view;		// Type de vue
-	double	zoom = 800.;				// Taille de "area" (en pixel)
-	double	real_colors = false;		// Activer la couleur réelle des étoiles
+	Float	zoom = 800.;				// Taille de "area" (en pixel)
+	Float	real_colors = false;		// Activer la couleur rï¿½elle des ï¿½toiles
 	bool	show_blocks = false;		// Afficher les blocs
 
-	double	step = 200000.;				// Pas de temps de la simulation (en années)
+	Float	step = 200000.;				// Pas de temps de la simulation (en annï¿½es)
 	time_t	simulation_time = 3600;		// Temps de simulation (en seconde)
 
 
@@ -88,7 +89,7 @@ int main(int argc, char* argv[])
 	{
 		create_blocks(area, blocks, galaxy, blocks_temp);
 
-		for (int i = 0; i < galaxy.size(); i++) // Boucle sur les étoiles de la galaxie
+		for (int i = 0; i < galaxy.size(); i++) // Boucle sur les ï¿½toiles de la galaxie
 		{
 			if (galaxy.at(i).is_alive)
 			{

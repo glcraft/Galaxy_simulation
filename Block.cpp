@@ -1,6 +1,6 @@
 #include "Block.h"
 #include "Utils.h"
-#include "Vector.h"
+#include <glm/glm.hpp>
 #include "Star.h"
 #include <iostream>
 #include <stdlib.h>
@@ -211,7 +211,7 @@ bool is_in(const Block& block, const Star& star)
 
 // Crée le premier bloc
 
-void initialise_blocks(int& index_value, const double& area, std::vector<Star>& galaxy, std::vector<Block>& blocks)
+void initialise_blocks(int& index_value, const Float& area, std::vector<Star>& galaxy, std::vector<Block>& blocks)
 {
 	Block block;
 
@@ -242,7 +242,7 @@ void initialise_blocks(int& index_value, const double& area, std::vector<Star>& 
 
 // Génère les blocs (l'utilisation de "blocks_temp" ne sert qu'à augmenter la limite des "std:::vector<>" pour pouvoir mettre plus d'étoiles)
 
-void create_blocks(const double& area, std::vector<Block>& blocks, std::vector<Star>& galaxy, std::vector<Block>& blocks_temp)
+void create_blocks(const Float& area, std::vector<Block>& blocks, std::vector<Star>& galaxy, std::vector<Block>& blocks_temp)
 {
 	blocks.clear();
 	int index_value = 0;

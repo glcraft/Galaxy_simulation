@@ -15,3 +15,4 @@ add_executable(GalaxySimu ${GalaxySimu_SRC})
 target_link_libraries(GalaxySimu PRIVATE 
     SDL2::SDL2 SDL2::SDL2main
     glm)
+message("${GalaxySimu_SRC}")

@@ -1,6 +1,6 @@
 #include "Block.h"
 #include "Utils.h"
-#include "Vector.h"
+#include <glm/glm.hpp>
 #include "Star.h"
 #include <iostream>
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 
 
 
-// Donne un int al�atoire entre deux bornes
+// Donne un int al�atoire entre deux bornes
 
 int random_int(const int& min, const int& max)
 {
@@ -23,22 +23,22 @@ int random_int(const int& min, const int& max)
 
 
 
-// Donne un double al�atoire entre deux bornes
+// Donne un Float al�atoire entre deux bornes
 
-double random_double(const double& min, const double& max)
+Float random_double(const Float& min, const Float& max)
 {
-	return (double(rand()) / double(RAND_MAX)) * (max - min) + min;
+	return (Float(rand()) / Float(RAND_MAX)) * (max - min) + min;
 }
 
 
 
-// Affiche les �toiles de la galaxie
+// Affiche les �toiles de la galaxie
 
-void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const double& area, const double& zoom, const View& view)
+void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view)
 {
-	double x;
-	double y;
-	double z;
+	Float x;
+	Float y;
+	Float z;
 	Vector screen_position;
 
 	Vector camera = Vector(0., area / 2., area / 2.);
@@ -52,7 +52,7 @@ void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const doub
 				x = (galaxy.at(i).position - mass_center).x;
 				y = (galaxy.at(i).position - mass_center).y / 3. - (galaxy.at(i).position - mass_center).z / 1.5;
 
-				screen_position = create_spherical(Vector(x, y, 0.).get_radius() / (get_distance(galaxy.at(i).position, camera)), Vector(x, y, 0.).get_phi(), Vector(x, y, 0.).get_theta());
+				screen_position = create_spherical(glm::length(Vector(x, y, 0.)) / (glm::distance(galaxy.at(i).position, camera)), get_phi(Vector(x, y, 0.)), get_theta(Vector(x, y, 0.)));
 
 				x = screen_position.x * zoom + WIDTH / 2.;
 				y = screen_position.y * zoom + HEIGHT / 2.;
@@ -98,7 +98,7 @@ void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const doub
 
 // Affiche les blocs (ne fonctionne pas en vue "delault_view")
 
-void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, const double& area, const double& zoom, const View& view)
+void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, const Float& area, const Float& zoom, const View& view)
 {
 	if (view == default_view)
 		return;
@@ -149,4 +149,67 @@ void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, co
 			SDL_RenderDrawPoint(renderer, x + j, y + block_size);
 		}
 	}
+}
+
+// Donne la valeur cartésienne x à partir des coordonnées sphériques (en mètres)
+
+Float get_x(const Float& radius, const Float& phi, const Float& theta)
+{
+	return glm::cos(phi) * glm::sin(theta) * radius;
+}
+
+
+
+// Donne la valeur cartésienne y à partir des coordonnées sphériques (en mètres)
+
+Float get_y(const Float& radius, const Float& phi, const Float& theta)
+{
+	return glm::sin(phi) * glm::sin(theta) * radius;
+}
+
+
+
+// Donne la valeur cartésienne z à partir des coordonnées sphériques (en mètres)
+
+Float get_z(const Float& radius, const Float& phi, const Float& theta)
+{
+	return glm::cos(theta) * radius;
+}
+
+// Construit un vecteur à partir de ses coordonnées sphériques
+
+Vector create_spherical(const Float& radius, const Float& phi, const Float& theta)
+{
+	return Vector(get_x(radius, phi, theta), get_y(radius, phi, theta), get_z(radius, phi, theta));
+}
+
+// Donne l'angle phi du vecteur (en radiants)
+
+Float get_phi(Vector vector)
+{
+	vector.z = 0.;
+
+	if (vector.y > 0)
+		return glm::acos(vector.x / glm::length(vector));
+
+	if (vector.y < 0)
+		return 2 * PI - acos(vector.x / glm::length(vector));
+}
+
+
+
+// Donne l'angle theta du vecteur (en radiants)
+
+Float get_theta(Vector vector)
+{
+	return glm::acos(vector.z / glm::length(vector));
+}
+
+Float get_phi(Vector point_1, Vector point_2)
+{
+	return get_phi(point_1 - point_2);
+}
+Float get_theta(Vector point_1, Vector point_2)
+{
+	return get_theta(point_1 - point_2);
 }
