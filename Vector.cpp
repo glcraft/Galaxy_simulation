@@ -22,7 +22,7 @@ Vector::Vector()
 
 
 
-// Construit un vecteur à partir d'un autre vecteur
+// Construit un vecteur Ã  partir d'un autre vecteur
 
 Vector::Vector(const Vector& vector)
 {
@@ -33,7 +33,7 @@ Vector::Vector(const Vector& vector)
 
 
 
-// Construit un vecteur à partir de ses coordonnées cartésiennes
+// Construit un vecteur Ã  partir de ses coordonnÃ©es cartÃ©siennes
 
 Vector::Vector(const double& x, const double& y, const double& z)
 {
@@ -44,7 +44,7 @@ Vector::Vector(const double& x, const double& y, const double& z)
 
 
 
-// Construit un vecteur à partir de ses coordonnées sphériques
+// Construit un vecteur Ã  partir de ses coordonnÃ©es sphÃ©riques
 
 Vector create_spherical(const double& radius, const double& phi, const double& theta)
 {
@@ -143,21 +143,21 @@ Vector operator/(const Vector& vector, const double& number)
 
 
 
-// Egalités
+// EgalitÃ©s
 
 bool operator==(const Vector& vector_1, const Vector& vector_2)
 {
-	return (vector_1.x == vector_2.x and vector_1.y == vector_2.y and vector_1.z == vector_2.z);
+	return (vector_1.x == vector_2.x && vector_1.y == vector_2.y && vector_1.z == vector_2.z);
 }
 
 bool operator!=(const Vector& vector_1, const Vector& vector_2)
 {
-	return (!(vector_1.x == vector_2.x and vector_1.y == vector_2.y and vector_1.z == vector_2.z));
+	return (!(vector_1.x == vector_2.x && vector_1.y == vector_2.y && vector_1.z == vector_2.z));
 }
 
 
 
-// Donne la norme du vecteur (en mètres)
+// Donne la norme du vecteur (en mÃ¨tres)
 
 double Vector::get_radius()
 {
@@ -192,7 +192,7 @@ double Vector::get_theta()
 
 
 
-// Donne la valeur cartésienne x à partir des coordonnées sphériques (en mètres)
+// Donne la valeur cartÃ©sienne x Ã  partir des coordonnÃ©es sphÃ©riques (en mÃ¨tres)
 
 double get_x(const double& radius, const double& phi, const double& theta)
 {
@@ -201,7 +201,7 @@ double get_x(const double& radius, const double& phi, const double& theta)
 
 
 
-// Donne la valeur cartésienne y à partir des coordonnées sphériques (en mètres)
+// Donne la valeur cartÃ©sienne y Ã  partir des coordonnÃ©es sphÃ©riques (en mÃ¨tres)
 
 double get_y(const double& radius, const double& phi, const double& theta)
 {
@@ -210,7 +210,7 @@ double get_y(const double& radius, const double& phi, const double& theta)
 
 
 
-// Donne la valeur cartésienne z à partir des coordonnées sphériques (en mètres)
+// Donne la valeur cartÃ©sienne z Ã  partir des coordonnÃ©es sphÃ©riques (en mÃ¨tres)
 
 double get_z(const double& radius, const double& phi, const double& theta)
 {
@@ -219,7 +219,7 @@ double get_z(const double& radius, const double& phi, const double& theta)
 
 
 
-// Donne la distance entre deux points (en mètres)
+// Donne la distance entre deux points (en mÃ¨tres)
 
 double get_distance(const Vector& point_1, const Vector& point_2)
 {

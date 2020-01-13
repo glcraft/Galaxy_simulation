@@ -13,7 +13,7 @@
 
 
 
-// Construit une étoile
+// Construit une Ã©toile
 
 Star::Star()
 {
@@ -31,7 +31,7 @@ Star::Star()
 
 
 
-// Construit une étoile à des coordonnées aléatoires dans la zone
+// Construit une Ã©toile Ã  des coordonnÃ©es alÃ©atoires dans la zone
 
 Star::Star(const double& initial_speed, const double& area, const double& step, const double& galaxy_thickness)
 {
@@ -50,7 +50,7 @@ Star::Star(const double& initial_speed, const double& area, const double& step, 
 
 
 
-// Construit une étoile à partir d'une autre étoile
+// Construit une Ã©toile Ã  partir d'une autre Ã©toile
 
 Star::Star(const Star& star)
 {
@@ -86,7 +86,7 @@ void Star::operator=(const Star& star)
 
 
 
-// Met à jour la position
+// Met Ã  jour la position
 
 void Star::position_maj(const double& step, const bool& verlet_integration)
 {
@@ -94,17 +94,17 @@ void Star::position_maj(const double& step, const bool& verlet_integration)
 	{
 		Vector temp = position;
 
-		position = 2. * position - previous_position + acceleration * step * step; // Intégration de Verlet
+		position = 2. * position - previous_position + acceleration * step * step; // IntÃ©gration de Verlet
 		previous_position = temp;
 	}
 
 	else
-		position += speed * step; // Méthode d'Euler
+		position += speed * step; // MÃ©thode d'Euler
 }
 
 
 
-// Met à jour la vitesse
+// Met Ã  jour la vitesse
 
 void Star::speed_maj(const double& step, const double& area)
 {
@@ -113,14 +113,14 @@ void Star::speed_maj(const double& step, const double& area)
 
 
 
-// Met à jour l'accélération et la densité
+// Met Ã  jour l'accÃ©lÃ©ration et la densitÃ©
 
 void Star::acceleration_and_density_maj(const double& precision, const std::vector<Star>& galaxy, const std::vector<Block>& blocks)
 {
 	density = 0.;
-	double max_acceleration = 0.0000000005; // Permet de limiter l'erreur due au pas de temps (à régler en fonction du pas de temps)
+	double max_acceleration = 0.0000000005; // Permet de limiter l'erreur due au pas de temps (Ã  rÃ©gler en fonction du pas de temps)
 
-	acceleration = force_and_density_calculation(precision, *this, blocks, 0); // Pas de division par la masse de l'étoile (c.f. ligne 131)
+	acceleration = force_and_density_calculation(precision, *this, blocks, 0); // Pas de division par la masse de l'Ã©toile (c.f. ligne 131)
 
 	if (acceleration.get_radius() > max_acceleration)
 		acceleration = create_spherical(max_acceleration, acceleration.get_phi(), acceleration.get_theta());
@@ -128,20 +128,20 @@ void Star::acceleration_and_density_maj(const double& precision, const std::vect
 
 
 
-// Calcule la densité et la force exercée sur une étoile (divisée par la masse de l'étoile pour éviter des calculs inutiles)
+// Calcule la densitÃ© et la force exercÃ©e sur une Ã©toile (divisÃ©e par la masse de l'Ã©toile pour Ã©viter des calculs inutiles)
 
 Vector force_and_density_calculation(const double& precision, Star& star, const std::vector<Block>& blocks, int index)
 {
 	Vector force = Vector(0., 0., 0.);
 	double distance = get_distance(star.position, blocks.at(index).mass_center);
 
-	if (!(blocks.at(index).as_children) and index != star.block_index)
+	if (!(blocks.at(index).as_children) && index != star.block_index)
 	{
 		force += create_spherical(-(G * blocks.at(index).mass) / (distance * distance), get_phi(star.position, blocks.at(index).mass_center), get_theta(star.position, blocks.at(index).mass_center));
 		star.density += blocks.at(index).stars.size() / (distance / LIGHT_YEAR);
 	}
 
-	if (blocks.at(index).as_children and index != star.block_index)
+	if (blocks.at(index).as_children && index != star.block_index)
 	{
 		if (blocks.at(index).size / distance > precision)
 		{
@@ -161,7 +161,7 @@ Vector force_and_density_calculation(const double& precision, Star& star, const 
 
 
 
-// Met à jour la couleur
+// Met Ã  jour la couleur
 
 void Star::color_maj(const std::vector <Star>& galaxy, const double& zoom, double& area, const std::vector<Block>& blocks)
 {
