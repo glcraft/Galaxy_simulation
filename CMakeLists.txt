@@ -8,7 +8,10 @@ file(GLOB GalaxySimu_SRC
 )
 
 find_package(SDL2 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 add_executable(GalaxySimu ${GalaxySimu_SRC})
 
-target_link_libraries(GalaxySimu PRIVATE SDL2::SDL2 SDL2::SDL2main)
+target_link_libraries(GalaxySimu PRIVATE 
+    SDL2::SDL2 SDL2::SDL2main
+    glm)
