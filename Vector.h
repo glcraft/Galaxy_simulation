@@ -1,5 +1,4 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#pragma once
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,16 +10,16 @@
 
 
 
-// Classe définissant un vecteur
+// Classe dï¿½finissant un vecteur
 
 class Vector
 {
 
 public:
 
-	double x; // coordonnée x (en mètres)
-	double y; // coordonnée y (en mètres)
-	double z; // coordonnée z (en mètres)
+	double x; // coordonnï¿½e x (en mï¿½tres)
+	double y; // coordonnï¿½e y (en mï¿½tres)
+	double z; // coordonnï¿½e z (en mï¿½tres)
 
 	Vector();
 	Vector(const Vector& vector);
@@ -53,5 +52,3 @@ double get_z(const double& radius, const double& phi, const double& theta);
 double get_distance(const Vector& point_1, const Vector& point_2);
 double get_phi(const Vector& point_1, const Vector& point_2);
 double get_theta(const Vector& point_1, const Vector& point_2);
-
-#endif

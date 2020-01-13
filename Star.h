@@ -1,5 +1,4 @@
-#ifndef STAR_H
-#define STAR_H
+#pragma once
 #include "Vector.h"
 #include <iostream>
 #include <stdlib.h>
@@ -14,20 +13,20 @@ class Block;
 
 
 
-// Classe définissant une étoile
+// Classe dï¿½finissant une ï¿½toile
 
 class Star
 {
 
 public:
 
-	bool		is_alive;			// Indique si l'étoile est prise en compte
+	bool		is_alive;			// Indique si l'ï¿½toile est prise en compte
 	Vector		previous_position;	// Position d'avant
 	Vector		position;			// Position
 	Vector		speed;				// Vitesse
-	Vector		acceleration;		// Accélération
+	Vector		acceleration;		// Accï¿½lï¿½ration
 	double		mass;				// Masse (en kilogrames)
-	double		density;			// Densité autour de l'étoile
+	double		density;			// Densitï¿½ autour de l'ï¿½toile
 	COLORREF	color;				// Couleur
 	int			index;				// Indice
 	int			block_index;		// Indice du bloc
@@ -46,5 +45,3 @@ public:
 
 Vector force_and_density_calculation(const double& precision, Star& star, const std::vector<Block>& blocks, int index);
 void initialize_galaxy(std::vector<Star>& galaxy, const int& stars_number, const double& area, const double& speed_initial, const double& step, const bool& is_black_hole, const double& black_hole_mass, const double& galaxy_thickness);
-
-#endif

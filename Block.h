@@ -1,5 +1,4 @@
-#ifndef BLOCK_H
-#define BLOCK_H
+#pragma once
 #include "Vector.h"
 #include "Star.h"
 #include <iostream>
@@ -14,24 +13,24 @@
 
 
 
-// Classe définissant une zone de l'algorithme de Barnes–Hut
+// Classe dï¿½finissant une zone de l'algorithme de Barnesï¿½Hut
 
 class Block
 {
 
 public:
 
-	bool				as_stars;		// Présence d'étoiles dans le bloc
-	std::vector<int>	stars;			// Les indices des étoiles présentes dans le bloc
-	Vector				mass_center;	// Centre de gravité du bloc
+	bool				as_stars;		// Prï¿½sence d'ï¿½toiles dans le bloc
+	std::vector<int>	stars;			// Les indices des ï¿½toiles prï¿½sentes dans le bloc
+	Vector				mass_center;	// Centre de gravitï¿½ du bloc
 	int					index;			// Indice du bloc
-	bool				as_children;	// Présence de blocs enfants
-	bool				as_parents;		// Présence de blocs parents
+	bool				as_children;	// Prï¿½sence de blocs enfants
+	bool				as_parents;		// Prï¿½sence de blocs parents
 	std::vector<int>	parents;		// Indice des blocs parents
 	std::vector<int>	children;		// Indice des blocs enfants
 	Vector				position;		// Position du bloc
 	double				mass;			// Masse contenue dans le bloc (en kilogrames)
-	double				size;			// Taille du bloc (en mètres)
+	double				size;			// Taille du bloc (en mï¿½tres)
 	
 	Block();
 	Block(const Block& block);
@@ -46,5 +45,3 @@ public:
 bool is_in(const Block& block, const Star& star);
 void initialise_blocks(int& index_value, const double& area, std::vector<Star>& galaxy, std::vector<Block>& blocks);
 void create_blocks(const double& area, std::vector<Block>& blocks, std::vector<Star>& galaxy, std::vector<Block>& blocks_temp);
-
-#endif
