@@ -43,12 +43,15 @@ void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const Floa
 
 	Vector camera = Vector(0., area / 2., area / 2.);
 
+	Float  coef = 1. / (area / zoom);
+
 	for (int i = 0; i < galaxy.size(); i++)
 	{
 		if (galaxy[i].is_alive)
 		{
-			if (view == default_view)
+			switch (view)
 			{
+			case default_view:
 				x = (galaxy[i].position - mass_center).x;
 				y = (galaxy[i].position - mass_center).y / 3. - (galaxy[i].position - mass_center).z / 1.5;
 
@@ -56,24 +59,19 @@ void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const Floa
 
 				x = screen_position.x * zoom + WIDTH / 2.;
 				y = screen_position.y * zoom + HEIGHT / 2.;
-			}
-
-			if (view == xy)
-			{
-				x = (galaxy[i].position - mass_center).x / (area / zoom) + WIDTH / 2.;
-				y = (galaxy[i].position - mass_center).y / (area / zoom) + HEIGHT / 2.;
-			}
-
-			if (view == xz)
-			{
-				x = (galaxy[i].position - mass_center).x / (area / zoom) + WIDTH / 2.;
-				y = (galaxy[i].position - mass_center).z / (area / zoom) + HEIGHT / 2.;
-			}
-
-			if (view == yz)
-			{
-				x = (galaxy[i].position - mass_center).y / (area / zoom) + WIDTH / 2.;
-				y = (galaxy[i].position - mass_center).z / (area / zoom) + HEIGHT / 2.;
+				break;
+			case xy:
+				x = (galaxy[i].position - mass_center).x * coef + WIDTH / 2.;
+				y = (galaxy[i].position - mass_center).y * coef + HEIGHT / 2.;
+				break;
+			case xz:
+				x = (galaxy[i].position - mass_center).x * coef + WIDTH / 2.;
+				y = (galaxy[i].position - mass_center).z * coef + HEIGHT / 2.;
+				break;
+			case yz:
+				x = (galaxy[i].position - mass_center).y * coef + WIDTH / 2.;
+				y = (galaxy[i].position - mass_center).z * coef + HEIGHT / 2.;
+				break;
 			}
 
 			SDL_SetRenderDrawColor(renderer, GetRValue(galaxy[i].color), GetGValue(galaxy[i].color), GetBValue(galaxy[i].color), SDL_ALPHA_OPAQUE);
