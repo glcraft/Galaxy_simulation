@@ -133,26 +133,26 @@ void Star::acceleration_and_density_maj(const Float& precision, const std::vecto
 Vector force_and_density_calculation(const Float& precision, Star& star, const std::vector<Block>& blocks, int index)
 {
 	Vector force = Vector(0.f);
-	Float distance = glm::distance(star.position, blocks.at(index).mass_center);
+	Float distance = glm::distance(star.position, blocks[index].mass_center);
 
-	if (!(blocks.at(index).as_children) && index != star.block_index)
+	if (!(blocks[index].as_children) && index != star.block_index)
 	{
-		force += create_spherical(-(G * blocks.at(index).mass) / (distance * distance), get_phi(star.position, blocks.at(index).mass_center), get_theta(star.position, blocks.at(index).mass_center));
-		star.density += blocks.at(index).stars.size() / (distance / LIGHT_YEAR);
+		force += create_spherical(-(G * blocks[index].mass) / (distance * distance), get_phi(star.position, blocks[index].mass_center), get_theta(star.position, blocks[index].mass_center));
+		star.density += blocks[index].stars.size() / (distance / LIGHT_YEAR);
 	}
 
-	if (blocks.at(index).as_children && index != star.block_index)
+	if (blocks[index].as_children && index != star.block_index)
 	{
-		if (blocks.at(index).size / distance > precision)
+		if (blocks[index].size / distance > precision)
 		{
-			force += create_spherical(-(G * blocks.at(index).mass) / (distance * distance), get_phi(star.position, blocks.at(index).mass_center), get_theta(star.position, blocks.at(index).mass_center));
-			star.density += blocks.at(index).stars.size() / (distance / LIGHT_YEAR);
+			force += create_spherical(-(G * blocks[index].mass) / (distance * distance), get_phi(star.position, blocks[index].mass_center), get_theta(star.position, blocks[index].mass_center));
+			star.density += blocks[index].stars.size() / (distance / LIGHT_YEAR);
 		}
 
 		else
 		{
-			for (int i = 0; i < blocks.at(index).children.size(); i++)
-				force += force_and_density_calculation(precision, star, blocks, blocks.at(index).children.at(i));
+			for (int i = 0; i < blocks[index].children.size(); i++)
+				force += force_and_density_calculation(precision, star, blocks, blocks[index].children[i]);
 		}
 	}
 

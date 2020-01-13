@@ -79,10 +79,10 @@ void Block::stars_maj(std::vector<Star>& galaxy, std::vector<Block>& blocks)
 
 	for (int i = 0; i < blocks.at(parents.at(parents.size() - 1)).stars.size(); i++)
 	{
-		if (is_in(*this, galaxy.at(blocks.at(parents.at(parents.size() - 1)).stars.at(i))))
+		if (is_in(*this, galaxy.at(blocks.at(parents.at(parents.size() - 1)).stars[i])))
 		{
-			stars.push_back(blocks.at(parents.at(parents.size() - 1)).stars.at(i));
-			galaxy.at(blocks.at(parents.at(parents.size() - 1)).stars.at(i)).block_index = index;
+			stars.push_back(blocks.at(parents.at(parents.size() - 1)).stars[i]);
+			galaxy.at(blocks.at(parents.at(parents.size() - 1)).stars[i]).block_index = index;
 
 			if (!(as_stars))
 				as_stars = true;
@@ -101,8 +101,8 @@ void Block::mass_center_and_mass_maj(const std::vector<Star>& galaxy)
 
 	for (int i = 0; i < stars.size(); i++)
 	{
-		mass_center += galaxy.at(stars.at(i)).position * galaxy.at(stars.at(i)).mass;
-		mass += galaxy.at(stars.at(i)).mass;
+		mass_center += galaxy.at(stars[i]).position * galaxy.at(stars[i]).mass;
+		mass += galaxy.at(stars[i]).mass;
 	}
 
 	mass_center = mass_center / mass;
@@ -221,17 +221,17 @@ void initialise_blocks(int& index_value, const Float& area, std::vector<Star>& g
 
 	for (int i = 0; i < galaxy.size(); i++)
 	{
-		if (is_in(block, galaxy.at(i)))
+		if (is_in(block, galaxy[i]))
 		{
 			block.stars.push_back(i);
-			galaxy.at(i).block_index = block.index;
+			galaxy[i].block_index = block.index;
 
 			if (!(block.as_stars))
 				block.as_stars = true;
 		}
 
 		else
-			galaxy.at(i).is_alive = false;
+			galaxy[i].is_alive = false;
 	}
 
 	block.mass_center_and_mass_maj(galaxy);
@@ -251,13 +251,13 @@ void create_blocks(const Float& area, std::vector<Block>& blocks, std::vector<St
 
 	for (int i = 0; i < blocks.size(); i++)
 	{
-		if (blocks.at(i).stars.size() > 1)
-			blocks.at(i).divide(index_value, galaxy, blocks, blocks_temp);
+		if (blocks[i].stars.size() > 1)
+			blocks[i].divide(index_value, galaxy, blocks, blocks_temp);
 
 		if (blocks_temp.size() > 0)
 		{
 			for (int j = 0; j < blocks_temp.size(); j++)
-				blocks.push_back(blocks_temp.at(j));
+				blocks.push_back(blocks_temp[j]);
 
 			blocks_temp.clear();
 		}

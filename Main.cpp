@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 	Float	black_hole_mass = 0.;		// Masse du trou noir (en masses solaires)
 	bool	is_black_hole = false;		// Pr�sence d'un trou noir
 
-	View	view = default_view;		// Type de vue
+	View	view = xy;		// Type de vue
 	Float	zoom = 800.;				// Taille de "area" (en pixel)
 	Float	real_colors = false;		// Activer la couleur r�elle des �toiles
 	bool	show_blocks = false;		// Afficher les blocs
@@ -91,17 +91,17 @@ int main(int argc, char* argv[])
 
 		for (int i = 0; i < galaxy.size(); i++) // Boucle sur les �toiles de la galaxie
 		{
-			if (galaxy.at(i).is_alive)
+			if (galaxy[i].is_alive)
 			{
-				galaxy.at(i).acceleration_and_density_maj(precision, galaxy, blocks);
+				galaxy[i].acceleration_and_density_maj(precision, galaxy, blocks);
 
 				if (!(verlet_integration))
-					galaxy.at(i).speed_maj(step, area);
+					galaxy[i].speed_maj(step, area);
 
-				galaxy.at(i).position_maj(step, verlet_integration);
+				galaxy[i].position_maj(step, verlet_integration);
 
 				if (!(real_colors))
-					galaxy.at(i).color_maj(galaxy, zoom, area, blocks);
+					galaxy[i].color_maj(galaxy, zoom, area, blocks);
 			}
 
 			// Affichage
@@ -117,10 +117,10 @@ int main(int argc, char* argv[])
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		SDL_RenderClear(renderer);
 
-		draw_stars(galaxy, blocks.at(0).mass_center, area, zoom, view);
+		draw_stars(galaxy, blocks[0].mass_center, area, zoom, view);
 
 		if (show_blocks)
-			draw_blocks(blocks, blocks.at(0).mass_center, area, zoom, view);
+			draw_blocks(blocks, blocks[0].mass_center, area, zoom, view);
 
 		SDL_RenderPresent(renderer);
 	}
