@@ -151,7 +151,7 @@ Vector force_and_density_calculation(const Float& precision, Star& star, const s
 
 		else
 		{
-			for (int i = 0; i < blocks[index].children.size(); i++)
+			for (int i = 0; i < 8; i++)
 				force += force_and_density_calculation(precision, star, blocks, blocks[index].children[i]);
 		}
 	}

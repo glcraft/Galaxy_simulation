@@ -25,7 +25,6 @@ Block::Block()
 	as_children = false;
 	as_parents = false;
 	parents.clear();
-	children.clear();
 	position = Vector(0., 0., 0.);
 	mass = 0.;
 	size = 0.;
@@ -44,7 +43,7 @@ Block::Block(const Block& block)
 	as_children = block.as_children;
 	as_parents = block.as_parents;
 	parents = block.parents;
-	children = block.children;
+	std::copy(std::begin(block.children), std::end(block.children), children);
 	position = block.position;
 	mass = block.mass;
 	size = block.size;
@@ -54,19 +53,9 @@ Block::Block(const Block& block)
 
 // Assignation
 
-void Block::operator=(const Block& block)
+void Block::operator=(Block block)
 {
-	as_stars = block.as_stars;
-	stars = block.stars;
-	mass_center = block.mass_center;
-	index = block.index;
-	as_children = block.as_children;
-	as_parents = block.as_parents;
-	parents = block.parents;
-	children = block.children;
-	position = block.position;
-	mass = block.mass;
-	size = block.size;
+	std::swap(block, *this);
 }
 
 
@@ -123,77 +112,29 @@ void Block::divide(int& index_value, std::vector<Star>& galaxy, std::vector<Bloc
 	block.parents.push_back(index);
 	block.size = size / 2.;
 
-	// bloc 1
-	block.position = Vector(position.x - size / 4., position.y - size / 4., position.z - size / 4.);
-	block.index = index_value;
-	index_value++;
-	children.push_back(block.index);
-	block.stars_maj(galaxy, blocks);
-	block.mass_center_and_mass_maj(galaxy);
-	blocks_temp.push_back(block);
+	Vector posis[] = {
+		{position.x - size / 4., position.y - size / 4., position.z - size / 4.},
+		{position.x - size / 4., position.y - size / 4., position.z + size / 4.},
+		{position.x - size / 4., position.y + size / 4., position.z - size / 4.},
+		{position.x - size / 4., position.y + size / 4., position.z + size / 4.},
+		{position.x + size / 4., position.y - size / 4., position.z - size / 4.},
+		{position.x + size / 4., position.y - size / 4., position.z + size / 4.},
+		{position.x + size / 4., position.y + size / 4., position.z - size / 4.},
+		{position.x + size / 4., position.y + size / 4., position.z + size / 4.}
+	};
 
-	// bloc 2
-	block.position = Vector(position.x - size / 4., position.y - size / 4., position.z + size / 4.);
-	block.index = index_value;
-	index_value++;
-	children.push_back(block.index);
-	block.stars_maj(galaxy, blocks);
-	block.mass_center_and_mass_maj(galaxy);
-	blocks_temp.push_back(block);
 
-	// bloc 3
-	block.position = Vector(position.x - size / 4., position.y + size / 4., position.z - size / 4.);
-	block.index = index_value;
-	index_value++;
-	children.push_back(block.index);
-	block.stars_maj(galaxy, blocks);
-	block.mass_center_and_mass_maj(galaxy);
-	blocks_temp.push_back(block);
-
-	// bloc 4
-	block.position = Vector(position.x - size / 4., position.y + size / 4., position.z + size / 4.);
-	block.index = index_value;
-	index_value++;
-	children.push_back(block.index);
-	block.stars_maj(galaxy, blocks);
-	block.mass_center_and_mass_maj(galaxy);
-	blocks_temp.push_back(block);
-
-	// bloc 5
-	block.position = Vector(position.x + size / 4., position.y - size / 4., position.z - size / 4.);
-	block.index = index_value;
-	index_value++;
-	children.push_back(block.index);
-	block.stars_maj(galaxy, blocks);
-	block.mass_center_and_mass_maj(galaxy);
-	blocks_temp.push_back(block);
-
-	// bloc 6
-	block.position = Vector(position.x + size / 4., position.y - size / 4., position.z + size / 4.);
-	block.index = index_value;
-	index_value++;
-	children.push_back(block.index);
-	block.stars_maj(galaxy, blocks);
-	block.mass_center_and_mass_maj(galaxy);
-	blocks_temp.push_back(block);
-
-	// bloc 7
-	block.position = Vector(position.x + size / 4., position.y + size / 4., position.z - size / 4.);
-	block.index = index_value;
-	index_value++;
-	children.push_back(block.index);
-	block.stars_maj(galaxy, blocks);
-	block.mass_center_and_mass_maj(galaxy);
-	blocks_temp.push_back(block);
-
-	// bloc 8
-	block.position = Vector(position.x + size / 4., position.y + size / 4., position.z + size / 4.);
-	block.index = index_value;
-	index_value++;
-	children.push_back(block.index);
-	block.stars_maj(galaxy, blocks);
-	block.mass_center_and_mass_maj(galaxy);
-	blocks_temp.push_back(block);
+	for (int ibloc = 0; ibloc < 8; ibloc++)
+	{
+		// bloc 1
+		block.position = posis[ibloc];
+		block.index = index_value;
+		index_value++;
+		children[ibloc]=(block.index);
+		block.stars_maj(galaxy, blocks);
+		block.mass_center_and_mass_maj(galaxy);
+		blocks_temp.push_back(block);
+	}
 }
 
 

@@ -28,7 +28,7 @@ public:
 	bool				as_children;	// Présence de blocs enfants
 	bool				as_parents;		// Présence de blocs parents
 	std::vector<int>	parents;		// Indice des blocs parents
-	std::vector<int>	children;		// Indice des blocs enfants
+	int					children[8];		// Indice des blocs enfants
 	Vector				position;		// Position du bloc
 	Float				mass;			// Masse contenue dans le bloc (en kilogrames)
 	Float				size;			// Taille du bloc (en mètres)
@@ -36,7 +36,7 @@ public:
 	Block();
 	Block(const Block& block);
 
-	void operator=(const Block& block);
+	void operator=(Block block);
 
 	void stars_maj(std::vector<Star>& galaxy, std::vector<Block>& blocks);
 	void mass_center_and_mass_maj(const std::vector<Star>& galaxy);
