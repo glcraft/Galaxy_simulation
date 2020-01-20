@@ -31,5 +31,5 @@ Essayez la simulation [ici]()
 
 ## Crédits
 
-[Angel Uriot (as DIMENSION)](https://github.com/angeluriot) - Créateur du projet
-[Gabin Lefranc (as GLCraft)](https://github.com/glcraft) - Amélioration performance et gestion de la mémoire.
+* [Angel Uriot (as DIMENSION)](https://github.com/angeluriot) - Créateur du projet
+* [Gabin Lefranc (as GLCraft)](https://github.com/glcraft) - Amélioration performance et gestion de la mémoire.
