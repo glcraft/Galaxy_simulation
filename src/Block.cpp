@@ -130,12 +130,16 @@ void Block::divide(Star::range stars)
 	{
 		contains = stars.begin; // pas très utile, permet de clear la memoire de array<Block, 8> si c'était sa valeur précédente
 		nb_stars = 0;
+		mass = 0.;
+		mass_center = Vector(0.);
 		as_children = false;
 	}
 	else if (std::next(stars.begin)==stars.end) // une étoile
 	{
 		contains = stars.begin;
 		nb_stars = 1;
+		mass = stars.begin->mass;
+		mass_center = stars.begin->position;
 		as_children = false;
 	}
 	else

@@ -134,13 +134,14 @@ void Star::acceleration_and_density_maj(const Float& precision, const Block& blo
 Vector force_and_density_calculation(const Float& precision, Star& star, const Block& block)
 {
 	Vector force = Vector(0.f);
-	const Block* current_block = &block;
+	if (block.nb_stars==0)
+		return force;
 	{
 		Float distance = glm::distance(star.position, block.mass_center);
 		if (!block.as_children)
 		{
 			Star::container::iterator itStar = std::get<0>(block.contains);
-			if (&*itStar!=&star)
+			if (distance!=0.)
 			{
 				force += create_spherical(-(G * block.mass) / (distance * distance), get_phi(star.position, block.mass_center), get_theta(star.position, block.mass_center));
 				star.density += 1. / (distance / LIGHT_YEAR);
@@ -153,7 +154,6 @@ Vector force_and_density_calculation(const Float& precision, Star& star, const B
 				force += create_spherical(-(G * block.mass) / (distance * distance), get_phi(star.position, block.mass_center), get_theta(star.position, block.mass_center));
 				star.density += block.nb_stars / (distance / LIGHT_YEAR);
 			}
-
 			else
 			{
 				auto& blocks = std::get<1>(block.contains);

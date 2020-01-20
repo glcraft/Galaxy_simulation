@@ -20,11 +20,11 @@ int main(int argc, char* argv[])
 {
 	// ------------------------- Paramètres de la simulation -------------------------
 	Float	area = 500.;				// Taille de la zone d'apparition des étoiles (en années lumière)
-	Float	galaxy_thickness = 0.15;	// Epaisseur de la galaxie (en "area")
-	Float	precision = 0.5;			// Précision du calcul de l'accélération (algorithme de Barnes-Hut)
+	Float	galaxy_thickness = 0.2;	// Epaisseur de la galaxie (en "area")
+	Float	precision = 0.1;			// Précision du calcul de l'accélération (algorithme de Barnes-Hut)
 	bool	verlet_integration = true;	// Utiliser l'intégration de Verlet au lieu de la méthode d'Euler
 
-	int		stars_number = 30000;		// Nombre d'étoiles (Limité à 30 000 par les std::vector<>)
+	int		stars_number = 3000;		// Nombre d'étoiles (Limité à 30 000 par les std::vector<>)
 	Float	initial_speed = 2500.;		// Vitesse initiale des d'étoiles (en mêtres par seconde)
 	Float	black_hole_mass = 0.;		// Masse du trou noir (en masses solaires)
 	bool	is_black_hole = false;		// Présence d'un trou noir
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 	SDL_Event event;
 
 	if (area < 0.1) area = 0.1;
-	if (galaxy_thickness < 0.1) galaxy_thickness = 0.1;
+	////if (galaxy_thickness < 0.1) galaxy_thickness = 0.1;
 	if (precision < 0.) precision = 0.;
 	if (precision > 1.) precision = 1.;
 	if (stars_number < 1) stars_number = 1;
