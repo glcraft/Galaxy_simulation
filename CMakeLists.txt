@@ -15,4 +15,5 @@ add_executable(GalaxySimu ${GalaxySimu_SRC})
 target_link_libraries(GalaxySimu PRIVATE 
     SDL2::SDL2 SDL2::SDL2main
     glm)
+target_include_directories(GalaxySimu PRIVATE "${CMAKE_SOURCE_DIR}/include")
 message("${GalaxySimu_SRC}")

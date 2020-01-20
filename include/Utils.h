@@ -22,8 +22,8 @@ class Block;
 constexpr Float LIGHT_YEAR = (9.461 * const_pow<Float>(10, 15));
 constexpr Float PI = 3.14159265;
 constexpr Float G = 0.00000000006674;
-constexpr Float HEIGHT = 1080.;
-constexpr Float WIDTH = 1920.;
+constexpr Float HEIGHT = 1080./4.*3.;
+constexpr Float WIDTH = 1920./4.*3.;
 constexpr Float SOLAR_MASS = (1.989 * const_pow<Float>(10, 30));
 constexpr Float YEAR = 31536000.;
 

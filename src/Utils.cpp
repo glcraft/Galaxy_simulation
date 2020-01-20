@@ -1,7 +1,7 @@
-#include "Block.h"
-#include "Utils.h"
+#include <Block.h>
+#include <Utils.h>
 #include <glm/glm.hpp>
-#include "Star.h"
+#include <Star.h>
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,7 +10,7 @@
 #include <thread>
 #include <vector>
 #include <cmath>
-#include "SDL.h"
+#include <SDL.h>
 
 
 

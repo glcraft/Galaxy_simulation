@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "Utils.h"
-#include "Star.h"
+#include <Utils.h>
+#include <Star.h>
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
