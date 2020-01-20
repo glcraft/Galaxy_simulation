@@ -1,17 +1,35 @@
 # Galaxy_simulation  
-  
-Le code source en C++ du projet :
 
-[**Main.cpp**](https://github.com/angeluriot/Galaxy_simulation/blob/master/Main.cpp)  
-[**Star.cpp**](https://github.com/angeluriot/Galaxy_simulation/blob/master/Star.cpp)  
-[**Star.h**](https://github.com/angeluriot/Galaxy_simulation/blob/master/Star.h)  
-[**Utils.cpp**](https://github.com/angeluriot/Galaxy_simulation/blob/master/Utils.cpp)  
-[**Utils.h**](https://github.com/angeluriot/Galaxy_simulation/blob/master/Utils.h)  
-[**Block.cpp**](https://github.com/angeluriot/Galaxy_simulation/blob/master/Block.cpp)  
-[**Block.h**](https://github.com/angeluriot/Galaxy_simulation/blob/master/Block.h)  
-  
-*(J'ai utilisé la librairie* ***SDL2***_)_  
-  
-Un exécutable test du programme :  
-  
-[**Galaxy_simulation.exe**](https://github.com/angeluriot/Galaxy_simulation/blob/master/Galaxy_simulation.exe) *(Attention, il est possible que le programme soit bloqué par Windows, cliquez alors sur* ***"Informations complémentaires"*** *puis sur* ***"Exécuter quand même"***_)_
+## Démonstration de la [simulation de Barnes-Hut](https://fr.wikipedia.org/wiki/Simulation_de_Barnes-Hut)
+
+![demo](https://pbs.twimg.com/ext_tw_video_thumb/1216407031193788416/pu/img/483E4qKoJPfnuDdk?format=jpg&name=small "Démonstration")
+
+## Construction
+
+* Si ce n'est pas déjà fait, installez [vcpkg](https://github.com/microsoft/vcpkg) et [cmake](https://cmake.org)
+* Installer les packages suivants via vcpkg :
+  * sdl2
+  * glm
+* Configurez le projet via cmake (avec pour toolchain celui de vcpkg)
+* Build!
+
+### Exemple de construction sur Windows
+
+Une fois que vous vous êtes prémuni de vcpkg et cmake, et en utilisant Visual Studio 2019 comme IDE, procédez ainsi :
+
+```bat
+vcpkg install sdl2:x64-windows glm:x64-windows
+mkdir build
+cd build
+cmake -G "Visual Studio 16 2019" -A x86 ..
+```
+Démarrez le projet Visual Studio dans le dossier `build/` puis lancer la compilation.
+
+## Release
+
+Essayez la simulation [ici]()
+
+## Crédits
+
+[Angel Uriot (as DIMENSION)](https://github.com/angeluriot) - Créateur du projet
+[Gabin Lefranc (as GLCraft)](https://github.com/glcraft) - Amélioration performance et gestion de la mémoire.
