@@ -156,7 +156,7 @@ Vector force_and_density_calculation(const Float& precision, Star& star, const B
 
 			else
 			{
-				auto blocks = std::get<1>(block.contains);
+				auto& blocks = std::get<1>(block.contains);
 				for (int i = 0; i < 8; i++)
 					force += force_and_density_calculation(precision, star, blocks[i]);
 			}

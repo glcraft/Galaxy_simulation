@@ -48,4 +48,4 @@ public:
 Vector force_and_density_calculation(const Float& precision, Star& star, const Block& block);
 void initialize_galaxy(Star::container& galaxy, const int& stars_number, const Float& area, const Float& speed_initial, const Float& step, const bool& is_black_hole, const Float& black_hole_mass, const Float& galaxy_thickness);
 
-void draw_stars(typename Star::container& galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);
+void draw_stars(Star::range& galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);

@@ -46,4 +46,4 @@ public:
 
 bool is_in(const Block& block, const Star& star);
 void initialise_blocks(int& index_value, const Float& area, Star::container& galaxy, std::vector<Block>& blocks);
-void create_blocks(const Float& area, Block& block, Star::container& galaxy);
+void create_blocks(const Float& area, Block& block, Star::range& galaxy);

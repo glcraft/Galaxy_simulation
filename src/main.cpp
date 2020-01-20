@@ -71,30 +71,30 @@ int main(int argc, char* argv[])
 
 	initialize_galaxy(galaxy, stars_number, area, initial_speed, step, is_black_hole, black_hole_mass, galaxy_thickness);
 
+	Star::range alive_galaxy = { galaxy.begin(), galaxy.end() };
+
 	time_t start = time(NULL);
 
 	while (time(NULL) < start + simulation_time) // Boucle du pas de temps de la simulation
 	{
-		create_blocks(area, block, galaxy);
+		
+		create_blocks(area, block, alive_galaxy);
 
-		for (auto itStar = galaxy.begin(); itStar!=galaxy.end(); ++itStar) // Boucle sur les étoiles de la galaxie
+		for (auto itStar = alive_galaxy.begin; itStar!= alive_galaxy.end; ++itStar) // Boucle sur les étoiles de la galaxie
 		{
-			if (itStar->is_alive)
-			{
-				itStar->acceleration_and_density_maj(precision, block);
+			itStar->acceleration_and_density_maj(precision, block);
 
-				if (!(verlet_integration))
-					itStar->speed_maj(step, area);
+			if (!(verlet_integration))
+				itStar->speed_maj(step, area);
 
-				itStar->position_maj(step, verlet_integration);
+			itStar->position_maj(step, verlet_integration);
 
-				if (!(real_colors))
-					itStar->color_maj();
-			}
-
-			// Affichage
-
+			if (!is_in(block, *itStar))
+				itStar->is_alive = false;
+			else if (!(real_colors))
+				itStar->color_maj();
 		}
+			alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star& star) { return star.is_alive; });
 			SDL_PollEvent(&event);
 			if (event.type == SDL_QUIT)
 			{
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		SDL_RenderClear(renderer);
 
-		draw_stars(galaxy, block.mass_center, area, zoom, view);
+		draw_stars(alive_galaxy, block.mass_center, area, zoom, view);
 
 		// if (show_blocks)
 		// 	draw_blocks(blocks, block.mass_center, area, zoom, view);

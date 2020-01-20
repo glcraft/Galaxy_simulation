@@ -227,10 +227,10 @@ bool is_in(const Block& block, const Star& star)
 
 // Génère les blocs (l'utilisation de "blocks_temp" ne sert qu'à augmenter la limite des "std:::vector<>" pour pouvoir mettre plus d'étoiles)
 
-void create_blocks(const Float& area, Block& block, Star::container& galaxy)
+void create_blocks(const Float& area, Block& block, Star::range& alive_galaxy)
 {
 	int index_value = 0;
 	block.setSize(area * 3.);
-	block.mass_center_and_mass_maj({galaxy.begin(), galaxy.end()});
-	block.divide({galaxy.begin(), galaxy.end()});
+	block.mass_center_and_mass_maj(alive_galaxy);
+	block.divide(alive_galaxy);
 }

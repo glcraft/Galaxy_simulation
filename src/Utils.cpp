@@ -34,7 +34,7 @@ Float random_double(const Float& min, const Float& max)
 
 // Affiche les �toiles de la galaxie
 
-void draw_stars(Star::container& galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view)
+void draw_stars(Star::range& alive_galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view)
 {
 	Float x;
 	Float y;
@@ -45,7 +45,7 @@ void draw_stars(Star::container& galaxy, const Vector& mass_center, const Float&
 
 	Float  coef = 1. / (area / zoom);
 
-	for (auto itStar = galaxy.begin(); itStar!=galaxy.end(); ++itStar)
+	for (auto itStar = alive_galaxy.begin; itStar!= alive_galaxy.end; ++itStar)
 	{
 		if (itStar->is_alive)
 		{
