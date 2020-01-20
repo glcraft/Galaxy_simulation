@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.10)
 project(GalaxySimu)
 
 file(GLOB GalaxySimu_SRC
-    "*.cpp"
-    "*.h"
+    "src/*.cpp"
+    "include/*.h"
 )
 
 find_package(SDL2 CONFIG REQUIRED)
