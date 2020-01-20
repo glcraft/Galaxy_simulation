@@ -27,9 +27,9 @@ Démarrez le projet Visual Studio dans le dossier `build/` puis lancer la compil
 
 ## Release
 
-Essayez la simulation [ici]()
+Vous pouvez essayer le programme de simulation de galaxie [en le téléchargeant ici](https://github.com/glcraft/Galaxy_simulation/releases/tag/v1.1)
 
 ## Crédits
 
-[Angel Uriot (as DIMENSION)](https://github.com/angeluriot) - Créateur du projet
-[Gabin Lefranc (as GLCraft)](https://github.com/glcraft) - Amélioration performance et gestion de la mémoire.
+* [Angel Uriot (as DIMENSION)](https://github.com/angeluriot) - Créateur du projet
+* [Gabin Lefranc (as GLCraft)](https://github.com/glcraft) - Amélioration performance et gestion de la mémoire.
