@@ -32,4 +32,4 @@ Vous pouvez essayer le programme de simulation de galaxie [en le téléchargeant
 ## Crédits
 
 * [Angel Uriot (as DIMENSION)](https://github.com/angeluriot) - Créateur du projet
-* [Gabin Lefranc (as GLCraft)](https://github.com/glcraft) - Amélioration performance et gestion de la mémoire.
+* [Gabin Lefranc (as GLCraft)](https://github.com/glcraft) - Amélioration performance.
