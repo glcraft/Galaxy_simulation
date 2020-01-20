@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 	window = NULL;
 	renderer = NULL;
 
-	SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer);
+	SDL_CreateWindowAndRenderer(static_cast<int>(WIDTH), static_cast<int>(HEIGHT), 0, &window, &renderer);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
 	SDL_SetWindowTitle(window, "Galaxy simulation");
 	SDL_Event event;
@@ -54,8 +54,8 @@ int main(int argc, char* argv[])
 	if (galaxy_thickness < 0.1) galaxy_thickness = 0.1;
 	if (precision < 0.) precision = 0.;
 	if (precision > 1.) precision = 1.;
-	if (stars_number < 1.) stars_number = 1.;
-	if (stars_number > 30000.) stars_number = 30000.;
+	if (stars_number < 1) stars_number = 1;
+	if (stars_number > 30000) stars_number = 30000;
 	if (initial_speed < 0.) initial_speed = 0.;
 	if (black_hole_mass < 0.) black_hole_mass = 0.;
 	if (zoom < 1.) zoom = 1.;
