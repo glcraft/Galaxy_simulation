@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <chrono>
 #include <vector>
+#include <array>
 #include <SDL2/SDL.h>
 using Float = double;
 using Vector = glm::tvec3<Float>;
@@ -34,10 +35,12 @@ extern SDL_Renderer* renderer;
 
 int random_int(const int& min, const int& max);
 Float random_double(const Float& min, const Float& max);
-void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);
-void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);
+// draw_stars in Star.h
+
+// void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);
 Vector create_spherical(const Float& radius, const Float& phi, const Float& theta);
 Float get_phi(Vector vector);
 Float get_theta(Vector vector);
 Float get_phi(Vector point_1, Vector point_2);
 Float get_theta(Vector point_1, Vector point_2);
+

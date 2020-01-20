@@ -66,12 +66,8 @@ int main(int argc, char* argv[])
 	black_hole_mass *= SOLAR_MASS;
 	step *= YEAR;
 
-	std::vector<Star> galaxy;
-	std::vector<Block> blocks;
-	std::vector<Block> blocks_temp;
-	galaxy.clear();
-	blocks.clear();
-	blocks_temp.clear();
+	Star::container galaxy;
+	Block block;
 
 	initialize_galaxy(galaxy, stars_number, area, initial_speed, step, is_black_hole, black_hole_mass, galaxy_thickness);
 
@@ -79,40 +75,40 @@ int main(int argc, char* argv[])
 
 	while (time(NULL) < start + simulation_time) // Boucle du pas de temps de la simulation
 	{
-		create_blocks(area, blocks, galaxy, blocks_temp);
+		create_blocks(area, block, galaxy);
 
-		for (int i = 0; i < galaxy.size(); i++) // Boucle sur les étoiles de la galaxie
+		for (auto itStar = galaxy.begin(); itStar!=galaxy.end(); ++itStar) // Boucle sur les étoiles de la galaxie
 		{
-			if (galaxy[i].is_alive)
+			if (itStar->is_alive)
 			{
-				galaxy[i].acceleration_and_density_maj(precision, galaxy, blocks);
+				itStar->acceleration_and_density_maj(precision, block);
 
 				if (!(verlet_integration))
-					galaxy[i].speed_maj(step, area);
+					itStar->speed_maj(step, area);
 
-				galaxy[i].position_maj(step, verlet_integration);
+				itStar->position_maj(step, verlet_integration);
 
 				if (!(real_colors))
-					galaxy[i].color_maj(galaxy, zoom, area, blocks);
+					itStar->color_maj();
 			}
 
 			// Affichage
 
+		}
 			SDL_PollEvent(&event);
 			if (event.type == SDL_QUIT)
 			{
 				SDL_Quit();
 				exit(1);
 			}
-		}
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		SDL_RenderClear(renderer);
 
-		draw_stars(galaxy, blocks[0].mass_center, area, zoom, view);
+		draw_stars(galaxy, block.mass_center, area, zoom, view);
 
-		if (show_blocks)
-			draw_blocks(blocks, blocks[0].mass_center, area, zoom, view);
+		// if (show_blocks)
+		// 	draw_blocks(blocks, block.mass_center, area, zoom, view);
 
 		SDL_RenderPresent(renderer);
 	}

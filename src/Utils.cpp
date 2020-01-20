@@ -10,7 +10,7 @@
 #include <thread>
 #include <vector>
 #include <cmath>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 
 
@@ -34,7 +34,7 @@ Float random_double(const Float& min, const Float& max)
 
 // Affiche les �toiles de la galaxie
 
-void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view)
+void draw_stars(Star::container& galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view)
 {
 	Float x;
 	Float y;
@@ -45,36 +45,36 @@ void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const Floa
 
 	Float  coef = 1. / (area / zoom);
 
-	for (int i = 0; i < galaxy.size(); i++)
+	for (auto itStar = galaxy.begin(); itStar!=galaxy.end(); ++itStar)
 	{
-		if (galaxy[i].is_alive)
+		if (itStar->is_alive)
 		{
 			switch (view)
 			{
 			case default_view:
-				x = (galaxy[i].position - mass_center).x;
-				y = (galaxy[i].position - mass_center).y / 3. - (galaxy[i].position - mass_center).z / 1.5;
+				x = (itStar->position - mass_center).x;
+				y = (itStar->position - mass_center).y / 3. - (itStar->position - mass_center).z / 1.5;
 
-				screen_position = create_spherical(glm::length(Vector(x, y, 0.)) / (glm::distance(galaxy[i].position, camera)), get_phi(Vector(x, y, 0.)), get_theta(Vector(x, y, 0.)));
+				screen_position = create_spherical(glm::length(Vector(x, y, 0.)) / (glm::distance(itStar->position, camera)), get_phi(Vector(x, y, 0.)), get_theta(Vector(x, y, 0.)));
 
 				x = screen_position.x * zoom + WIDTH / 2.;
 				y = screen_position.y * zoom + HEIGHT / 2.;
 				break;
 			case xy:
-				x = (galaxy[i].position - mass_center).x * coef + WIDTH / 2.;
-				y = (galaxy[i].position - mass_center).y * coef + HEIGHT / 2.;
+				x = (itStar->position - mass_center).x * coef + WIDTH / 2.;
+				y = (itStar->position - mass_center).y * coef + HEIGHT / 2.;
 				break;
 			case xz:
-				x = (galaxy[i].position - mass_center).x * coef + WIDTH / 2.;
-				y = (galaxy[i].position - mass_center).z * coef + HEIGHT / 2.;
+				x = (itStar->position - mass_center).x * coef + WIDTH / 2.;
+				y = (itStar->position - mass_center).z * coef + HEIGHT / 2.;
 				break;
 			case yz:
-				x = (galaxy[i].position - mass_center).y * coef + WIDTH / 2.;
-				y = (galaxy[i].position - mass_center).z * coef + HEIGHT / 2.;
+				x = (itStar->position - mass_center).y * coef + WIDTH / 2.;
+				y = (itStar->position - mass_center).z * coef + HEIGHT / 2.;
 				break;
 			}
 
-			SDL_SetRenderDrawColor(renderer, GetRValue(galaxy[i].color), GetGValue(galaxy[i].color), GetBValue(galaxy[i].color), SDL_ALPHA_OPAQUE);
+			SDL_SetRenderDrawColor(renderer, GetRValue(itStar->color), GetGValue(itStar->color), GetBValue(itStar->color), SDL_ALPHA_OPAQUE);
 
 			// SDL_RenderDrawPoint(renderer, x - 1, y);
 			// SDL_RenderDrawPoint(renderer, x, y - 1);
@@ -82,7 +82,7 @@ void draw_stars(std::vector<Star>& galaxy, const Vector& mass_center, const Floa
 			// SDL_RenderDrawPoint(renderer, x + 1, y);
 			SDL_RenderDrawPoint(renderer, x, y);
 
-			// SDL_SetRenderDrawColor(renderer, GetRValue(galaxy[i].color), GetGValue(galaxy[i].color), GetBValue(galaxy[i].color), SDL_ALPHA_OPAQUE / 2.);
+			// SDL_SetRenderDrawColor(renderer, GetRValue(itStar->color), GetGValue(itStar->color), GetBValue(itStar->color), SDL_ALPHA_OPAQUE / 2.);
 
 			// SDL_RenderDrawPoint(renderer, x - 1, y - 1);
 			// SDL_RenderDrawPoint(renderer, x - 1, y + 1);

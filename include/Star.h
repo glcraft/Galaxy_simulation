@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <vector>
+#include <list>
 #include <cmath>
 
 
@@ -15,6 +16,11 @@ class Star
 {
 
 public:
+	using container = std::list<Star>;
+	struct range{
+		container::iterator begin;
+		container::iterator end;
+	};
 
 	bool		is_alive;			// Indique si l'étoile est prise en compte
 	Vector		previous_position;	// Position d'avant
@@ -35,9 +41,11 @@ public:
 
 	void position_maj(const Float& step, const bool& verlet_integration);
 	void speed_maj(const Float& step, const Float& area);
-	void acceleration_and_density_maj(const Float& precision, const std::vector<Star>& galaxy, const std::vector<Block>& blocks);
-	void color_maj(const std::vector <Star>& galaxy, const Float& zoom, Float& area, const std::vector<Block>& blocks);
+	void acceleration_and_density_maj(const Float& precision, const Block& block);
+	void color_maj();
 };
 
-Vector force_and_density_calculation(const Float& precision, Star& star, const std::vector<Block>& blocks, int index);
-void initialize_galaxy(std::vector<Star>& galaxy, const int& stars_number, const Float& area, const Float& speed_initial, const Float& step, const bool& is_black_hole, const Float& black_hole_mass, const Float& galaxy_thickness);
+Vector force_and_density_calculation(const Float& precision, Star& star, const Block& block);
+void initialize_galaxy(Star::container& galaxy, const int& stars_number, const Float& area, const Float& speed_initial, const Float& step, const bool& is_black_hole, const Float& black_hole_mass, const Float& galaxy_thickness);
+
+void draw_stars(typename Star::container& galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);
