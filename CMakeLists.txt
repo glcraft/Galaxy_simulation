@@ -18,7 +18,7 @@ target_link_libraries(GalaxySimu PRIVATE
     glm
     nlohmann_json::nlohmann_json
 )
-    target_compile_features(GalaxySimu
+target_compile_features(GalaxySimu
     PUBLIC
     c_std_11
 )
@@ -27,10 +27,16 @@ target_compile_features(GalaxySimu
     cxx_std_20
 )
 
+
+
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-   target_compile_options(GalaxySimu
-   PUBLIC
-   /std:c++latest /permissive- /experimental:preprocessor /fsanitize=address)
+    target_compile_options(GalaxySimu
+        PUBLIC
+            /std:c++latest /permissive- /experimental:preprocessor /fsanitize=address
+    )
+    set_target_properties(GalaxySimu PROPERTIES 
+        VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    )
 endif()
 
 target_include_directories(GalaxySimu PRIVATE "${CMAKE_SOURCE_DIR}/include")
