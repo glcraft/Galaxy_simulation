@@ -1,13 +1,6 @@
 #pragma once
 #include <Utils.h>
-#include <iostream>
-#include <Windows.h>
-#include <chrono>
-#include <thread>
-#include <vector>
 #include <list>
-#include <cmath>
-
 
 class Block;
 // Classe définissant une étoile

@@ -1,16 +1,7 @@
+#include <algorithm>
 #include <Utils.h>
 #include <Block.h>
-#include <glm/glm.hpp>
 #include <Star.h>
-#include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
-#include <Windows.h>
-#include <chrono>
-#include <thread>
-#include <vector>
-#include <cmath>
-#include <time.h>
 #include <SDL2/SDL.h>
 
 SDL_Window* window = NULL;

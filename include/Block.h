@@ -3,15 +3,8 @@
 #include <Utils.h>
 #include <Star.h>
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
-#include <Windows.h>
-#include <chrono>
-#include <thread>
 #include <vector>
 #include <variant>
-#include <cmath>
-#include <time.h>
 
 
 

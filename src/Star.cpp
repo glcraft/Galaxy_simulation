@@ -3,14 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
 #include <Star.h>
-#include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
-#include <Windows.h>
-#include <chrono>
-#include <thread>
 #include <vector>
-#include <cmath>
 
 
 

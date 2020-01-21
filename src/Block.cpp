@@ -2,17 +2,9 @@
 #include <Utils.h>
 #include <glm/glm.hpp>
 #include <Star.h>
-#include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
-#include <Windows.h>
-#include <chrono>
-#include <thread>
-#include <vector>
+#include <array>
 #include <algorithm>
 #include <functional>
-#include <cmath>
-#include <time.h>
 
 std::array<Star::range, 8> set_octree(Star::range stars, glm::vec3 pivot)
 {

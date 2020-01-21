@@ -2,19 +2,12 @@
 #include <Utils.h>
 #include <glm/glm.hpp>
 #include <Star.h>
-#include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
-#include <Windows.h>
-#include <chrono>
-#include <thread>
 #include <vector>
-#include <cmath>
 #include <SDL2/SDL.h>
 
 
 
-// Donne un int al�atoire entre deux bornes
+// Donne un int aléatoire entre deux bornes
 
 int random_int(const int& min, const int& max)
 {
@@ -23,7 +16,7 @@ int random_int(const int& min, const int& max)
 
 
 
-// Donne un Float al�atoire entre deux bornes
+// Donne un Float aléatoire entre deux bornes
 
 Float random_double(const Float& min, const Float& max)
 {
@@ -32,7 +25,7 @@ Float random_double(const Float& min, const Float& max)
 
 
 
-// Affiche les �toiles de la galaxie
+// Affiche les étoiles de la galaxie
 
 void draw_stars(Star::range& alive_galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view)
 {

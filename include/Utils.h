@@ -1,10 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <iostream>
-#include <Windows.h>
-#include <chrono>
 #include <vector>
-#include <array>
 #include <SDL2/SDL.h>
 using Float = double;
 using Vector = glm::tvec3<Float>;
