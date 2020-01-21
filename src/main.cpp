@@ -64,9 +64,7 @@ int main(int argc, char* argv[])
 
 	Star::range alive_galaxy = { galaxy.begin(), galaxy.end() };
 
-	time_t start = time(NULL);
-
-	while (time(NULL) < start + simulation_time) // Boucle du pas de temps de la simulation
+	while (true) // Boucle du pas de temps de la simulation
 	{
 		
 		create_blocks(area, block, alive_galaxy);

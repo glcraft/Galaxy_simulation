@@ -16,7 +16,7 @@ Star::Star()
 	position = Vector(0.f);
 	speed = Vector(0.f);
 	acceleration = Vector(0.f);
-	color = RGB(0, 0, 0);
+	color = 0;
 	mass = 0.f;
 	density = 0.f;
 	index = 0;

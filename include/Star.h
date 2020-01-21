@@ -22,7 +22,7 @@ public:
 	Vector		acceleration;		// Accélération
 	Float		mass;				// Masse (en kilogrames)
 	Float		density;			// Densité autour de l'étoile
-	COLORREF	color;				// Couleur
+	uint32_t	color;				// Couleur
 	int			index;				// Indice
 	int			block_index;		// Indice du bloc
 

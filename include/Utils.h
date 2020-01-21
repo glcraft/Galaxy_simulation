@@ -40,3 +40,12 @@ Float get_theta(Vector vector);
 Float get_phi(Vector point_1, Vector point_2);
 Float get_theta(Vector point_1, Vector point_2);
 
+constexpr uint32_t RGB(uint8_t r, uint8_t g, uint8_t b)
+{
+    return (r << 16) + (g << 8) + b;
+}
+template <int index>
+constexpr uint32_t GetRGBValue(uint32_t rgb)
+{
+    return (rgb >> (index*8))&0xFF;
+}

@@ -67,7 +67,7 @@ void draw_stars(Star::range& alive_galaxy, const Vector& mass_center, const Floa
 				break;
 			}
 
-			SDL_SetRenderDrawColor(renderer, GetRValue(itStar->color), GetGValue(itStar->color), GetBValue(itStar->color), SDL_ALPHA_OPAQUE);
+			SDL_SetRenderDrawColor(renderer, GetRGBValue<0>(itStar->color), GetRGBValue<1>(itStar->color), GetRGBValue<2>(itStar->color), SDL_ALPHA_OPAQUE);
 
 			// SDL_RenderDrawPoint(renderer, x - 1, y);
 			// SDL_RenderDrawPoint(renderer, x, y - 1);
