@@ -1,35 +1,62 @@
 #include <algorithm>
+#include <fstream>
 #include <Utils.h>
 #include <Block.h>
 #include <Star.h>
 #include <SDL2/SDL.h>
+#include <nlohmann/json.hpp>
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+
+#define READ_PARAMETER(value) { if (auto it = parameters.find(#value); it != parameters.end()) value = *it; }
 
 int main(int argc, char* argv[])
 {
 	// ------------------------- Paramètres de la simulation -------------------------
 	Float	area = 500.;				// Taille de la zone d'apparition des étoiles (en années lumière)
 	Float	galaxy_thickness = 0.2;	// Epaisseur de la galaxie (en "area")
-	Float	precision = 0.1;			// Précision du calcul de l'accélération (algorithme de Barnes-Hut)
+	Float	precision = 3.0;			// Précision du calcul de l'accélération (algorithme de Barnes-Hut)
 	bool	verlet_integration = true;	// Utiliser l'intégration de Verlet au lieu de la méthode d'Euler
 
-	int		stars_number = 3000;		// Nombre d'étoiles (Limité à 30 000 par les std::vector<>)
+	int		stars_number = 10000;		// Nombre d'étoiles 
 	Float	initial_speed = 2500.;		// Vitesse initiale des d'étoiles (en mêtres par seconde)
 	Float	black_hole_mass = 0.;		// Masse du trou noir (en masses solaires)
 	bool	is_black_hole = false;		// Présence d'un trou noir
 
 	View	view = default_view;		// Type de vue
 	Float	zoom = 800.;				// Taille de "area" (en pixel)
-	Float	real_colors = false;		// Activer la couleur réelle des étoiles
+	float	real_colors = false;		// Activer la couleur réelle des étoiles
 	bool	show_blocks = false;		// Afficher les blocs
 
 	Float	step = 200000.;				// Pas de temps de la simulation (en années)
-	time_t	simulation_time = 3600;		// Temps de simulation (en seconde)
+	time_t	simulation_time = 600;		// Temps de simulation (en seconde)
 	// -------------------------------------------------------------------------------
+	
+	std::ifstream fileParams((argc == 2) ? argv[1] : "./parameters.json");
+	if (fileParams)
+	{
+		nlohmann::json parameters;// = nlohmann::json::parse(fileParams);
+		fileParams >> parameters;
+		
+		READ_PARAMETER(area)
+		READ_PARAMETER(galaxy_thickness)
+		READ_PARAMETER(precision)
+		READ_PARAMETER(verlet_integration)
 
+		READ_PARAMETER(stars_number)
+		READ_PARAMETER(initial_speed)
+		READ_PARAMETER(black_hole_mass)
+		READ_PARAMETER(is_black_hole)
 
+		READ_PARAMETER(view)
+		READ_PARAMETER(zoom)
+		READ_PARAMETER(real_colors)
+		READ_PARAMETER(show_blocks)
+
+		READ_PARAMETER(step)
+		READ_PARAMETER(simulation_time)
+	}
 
 	SDL_Init(SDL_INIT_VIDEO);
 
@@ -43,8 +70,7 @@ int main(int argc, char* argv[])
 
 	if (area < 0.1) area = 0.1;
 	////if (galaxy_thickness < 0.1) galaxy_thickness = 0.1;
-	if (precision < 0.) precision = 0.;
-	if (precision > 1.) precision = 1.;
+	// if (precision > 1.) precision = 1.;
 	if (stars_number < 1) stars_number = 1;
 	//if (stars_number > 30000) stars_number = 30000;
 	if (initial_speed < 0.) initial_speed = 0.;
@@ -63,7 +89,7 @@ int main(int argc, char* argv[])
 	initialize_galaxy(galaxy, stars_number, area, initial_speed, step, is_black_hole, black_hole_mass, galaxy_thickness);
 
 	Star::range alive_galaxy = { galaxy.begin(), galaxy.end() };
-
+	float step2 = step * step;
 	while (true) // Boucle du pas de temps de la simulation
 	{
 		
@@ -85,7 +111,7 @@ int main(int argc, char* argv[])
 		}
 			alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star& star) { return star.is_alive; });
 			SDL_PollEvent(&event);
-			if (event.type == SDL_QUIT)
+			if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.scancode==SDL_SCANCODE_ESCAPE))
 			{
 				SDL_Quit();
 				exit(1);

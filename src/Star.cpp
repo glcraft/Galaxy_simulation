@@ -135,9 +135,9 @@ Vector force_and_density_calculation(const Float& precision, Star& star, const B
 			Star::container::iterator itStar = std::get<0>(block.contains);
 			if (distance2 !=0.)
 			{
-				Float distance = glm::sqrt(distance2);
-				force += (starToMass / distance) *(-(G * block.mass) / distance2);//create_spherical(-(G * block.mass) / (distance * distance), get_phi(star.position, block.mass_center), get_theta(star.position, block.mass_center));
-				star.density += 1. / (distance / LIGHT_YEAR);
+				Float inv_distance = 1./glm::sqrt(distance2);
+				force += (starToMass * inv_distance) *(-(G * block.mass) / distance2);
+				star.density += (inv_distance / LIGHT_YEAR);
 			}
 		}
 		else
@@ -146,7 +146,7 @@ Vector force_and_density_calculation(const Float& precision, Star& star, const B
 			Float thema = block.size / distance;
 			if (thema < precision)
 			{
-				force += (starToMass / distance) * (-(G * block.mass) / distance2);//create_spherical(-(G * block.mass) / (distance * distance), get_phi(star.position, block.mass_center), get_theta(star.position, block.mass_center));
+				force += (starToMass / distance) * (-(G * block.mass) / distance2);
 				star.density += block.nb_stars / (distance / LIGHT_YEAR);
 			}
 			else

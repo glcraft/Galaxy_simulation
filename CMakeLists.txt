@@ -8,13 +8,16 @@ file(GLOB GalaxySimu_SRC
 )
 
 find_package(SDL2 CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
 add_executable(GalaxySimu ${GalaxySimu_SRC})
 
 target_link_libraries(GalaxySimu PRIVATE 
-    SDL2::SDL2 SDL2::SDL2main
-    glm)
+    SDL2::SDL2 SDL2::SDL2main 
+    glm
+    nlohmann_json::nlohmann_json
+)
     target_compile_features(GalaxySimu
     PUBLIC
     c_std_11

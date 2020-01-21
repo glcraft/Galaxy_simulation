@@ -1,0 +1,19 @@
+{
+    "area" : 500.0,
+    "galaxy_thickness" : 0.2,
+    "precision" : 4.0,
+    "verlet_integration" : true,
+
+    "stars_number" : 15000,
+    "initial_speed" : 0.0,
+    "black_hole_mass" : 0.0,
+    "is_black_hole" : false,
+
+    "view" : 0,
+    "zoom" : 800.0,
+    "real_colors" : false,
+    "show_blocks" : false,
+
+    "step" : 200000.0,
+    "simulation_time" : 600
+}
