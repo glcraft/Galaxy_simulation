@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	// ------------------------- Paramètres de la simulation -------------------------
 	Float	area = 500.;				// Taille de la zone d'apparition des étoiles (en années lumière)
 	Float	galaxy_thickness = 0.2;	// Epaisseur de la galaxie (en "area")
-	Float	precision = 3.0;			// Précision du calcul de l'accélération (algorithme de Barnes-Hut)
+	Float	precision = 300.0;			// Précision du calcul de l'accélération (algorithme de Barnes-Hut)
 	bool	verlet_integration = true;	// Utiliser l'intégration de Verlet au lieu de la méthode d'Euler
 
 	int		stars_number = 10000;		// Nombre d'étoiles 
@@ -32,32 +32,32 @@ int main(int argc, char* argv[])
 	Float	step = 200000.;				// Pas de temps de la simulation (en années)
 	time_t	simulation_time = 600;		// Temps de simulation (en seconde)
 	// -------------------------------------------------------------------------------
-	
-	std::ifstream fileParams((argc == 2) ? argv[1] : "./parameters.json");
-	if (fileParams)
 	{
-		nlohmann::json parameters;// = nlohmann::json::parse(fileParams);
-		fileParams >> parameters;
-		
-		READ_PARAMETER(area)
-		READ_PARAMETER(galaxy_thickness)
-		READ_PARAMETER(precision)
-		READ_PARAMETER(verlet_integration)
+		std::ifstream fileParams((argc == 2) ? argv[1] : "./parameters.json");
+		if (fileParams)
+		{
+			nlohmann::json parameters;// = nlohmann::json::parse(fileParams);
+			fileParams >> parameters;
 
-		READ_PARAMETER(stars_number)
-		READ_PARAMETER(initial_speed)
-		READ_PARAMETER(black_hole_mass)
-		READ_PARAMETER(is_black_hole)
+			READ_PARAMETER(area)
+			READ_PARAMETER(galaxy_thickness)
+			READ_PARAMETER(precision)
+			READ_PARAMETER(verlet_integration)
 
-		READ_PARAMETER(view)
-		READ_PARAMETER(zoom)
-		READ_PARAMETER(real_colors)
-		READ_PARAMETER(show_blocks)
+			READ_PARAMETER(stars_number)
+			READ_PARAMETER(initial_speed)
+			READ_PARAMETER(black_hole_mass)
+			READ_PARAMETER(is_black_hole)
 
-		READ_PARAMETER(step)
-		READ_PARAMETER(simulation_time)
+			READ_PARAMETER(view)
+			READ_PARAMETER(zoom)
+			READ_PARAMETER(real_colors)
+			READ_PARAMETER(show_blocks)
+
+			READ_PARAMETER(step)
+			READ_PARAMETER(simulation_time)
+		}
 	}
-
 	SDL_Init(SDL_INIT_VIDEO);
 
 	window = NULL;
