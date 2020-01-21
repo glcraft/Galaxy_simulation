@@ -32,8 +32,8 @@ public:
 
 	void operator=(const Star& star);
 
-	void position_maj(const Float& step, const bool& verlet_integration);
-	void speed_maj(const Float& step, const Float& area);
+	void position_maj(Float step, bool verlet_integration);
+	void speed_maj(Float step, Float area);
 	void acceleration_and_density_maj(const Float& precision, const Block& block);
 	void color_maj();
 };

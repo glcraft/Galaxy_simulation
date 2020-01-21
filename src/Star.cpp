@@ -82,7 +82,7 @@ void Star::operator=(const Star& star)
 
 // Met à jour la position
 
-void Star::position_maj(const Float& step, const bool& verlet_integration)
+void Star::position_maj(Float step, bool verlet_integration)
 {
 	if (verlet_integration)
 	{
@@ -100,7 +100,7 @@ void Star::position_maj(const Float& step, const bool& verlet_integration)
 
 // Met à jour la vitesse
 
-void Star::speed_maj(const Float& step, const Float& area)
+void Star::speed_maj(Float step, Float area)
 {
 	speed += acceleration * step;
 }
