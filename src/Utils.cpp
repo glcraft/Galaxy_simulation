@@ -40,48 +40,45 @@ void draw_stars(Star::range& alive_galaxy, const Vector& mass_center, const Floa
 
 	for (auto itStar = alive_galaxy.begin; itStar!= alive_galaxy.end; ++itStar)
 	{
-		if (itStar->is_alive)
+		switch (view)
 		{
-			switch (view)
-			{
-			case default_view:
-				x = (itStar->position - mass_center).x;
-				y = (itStar->position - mass_center).y / 3. - (itStar->position - mass_center).z / 1.5;
+		case default_view:
+			x = (itStar->position - mass_center).x;
+			y = (itStar->position - mass_center).y / 3. - (itStar->position - mass_center).z / 1.5;
 
-				screen_position = create_spherical(glm::length(Vector(x, y, 0.)) / (glm::distance(itStar->position, camera)), get_phi(Vector(x, y, 0.)), get_theta(Vector(x, y, 0.)));
+			screen_position = create_spherical(glm::length(Vector(x, y, 0.)) / (glm::distance(itStar->position, camera)), get_phi(Vector(x, y, 0.)), get_theta(Vector(x, y, 0.)));
 
-				x = screen_position.x * zoom + WIDTH / 2.;
-				y = screen_position.y * zoom + HEIGHT / 2.;
-				break;
-			case xy:
-				x = (itStar->position - mass_center).x * coef + WIDTH / 2.;
-				y = (itStar->position - mass_center).y * coef + HEIGHT / 2.;
-				break;
-			case xz:
-				x = (itStar->position - mass_center).x * coef + WIDTH / 2.;
-				y = (itStar->position - mass_center).z * coef + HEIGHT / 2.;
-				break;
-			case yz:
-				x = (itStar->position - mass_center).y * coef + WIDTH / 2.;
-				y = (itStar->position - mass_center).z * coef + HEIGHT / 2.;
-				break;
-			}
-
-			SDL_SetRenderDrawColor(renderer, GetRGBValue<0>(itStar->color), GetRGBValue<1>(itStar->color), GetRGBValue<2>(itStar->color), SDL_ALPHA_OPAQUE);
-
-			// SDL_RenderDrawPoint(renderer, x - 1, y);
-			// SDL_RenderDrawPoint(renderer, x, y - 1);
-			// SDL_RenderDrawPoint(renderer, x, y + 1);
-			// SDL_RenderDrawPoint(renderer, x + 1, y);
-			SDL_RenderDrawPoint(renderer, x, y);
-
-			// SDL_SetRenderDrawColor(renderer, GetRValue(itStar->color), GetGValue(itStar->color), GetBValue(itStar->color), SDL_ALPHA_OPAQUE / 2.);
-
-			// SDL_RenderDrawPoint(renderer, x - 1, y - 1);
-			// SDL_RenderDrawPoint(renderer, x - 1, y + 1);
-			// SDL_RenderDrawPoint(renderer, x + 1, y - 1);
-			// SDL_RenderDrawPoint(renderer, x + 1, y + 1);
+			x = screen_position.x * zoom + WIDTH / 2.;
+			y = screen_position.y * zoom + HEIGHT / 2.;
+			break;
+		case xy:
+			x = (itStar->position - mass_center).x * coef + WIDTH / 2.;
+			y = (itStar->position - mass_center).y * coef + HEIGHT / 2.;
+			break;
+		case xz:
+			x = (itStar->position - mass_center).x * coef + WIDTH / 2.;
+			y = (itStar->position - mass_center).z * coef + HEIGHT / 2.;
+			break;
+		case yz:
+			x = (itStar->position - mass_center).y * coef + WIDTH / 2.;
+			y = (itStar->position - mass_center).z * coef + HEIGHT / 2.;
+			break;
 		}
+
+		SDL_SetRenderDrawColor(renderer, GetRGBValue<0>(itStar->color), GetRGBValue<1>(itStar->color), GetRGBValue<2>(itStar->color), SDL_ALPHA_OPAQUE);
+
+		// SDL_RenderDrawPoint(renderer, x - 1, y);
+		// SDL_RenderDrawPoint(renderer, x, y - 1);
+		// SDL_RenderDrawPoint(renderer, x, y + 1);
+		// SDL_RenderDrawPoint(renderer, x + 1, y);
+		SDL_RenderDrawPoint(renderer, x, y);
+
+		// SDL_SetRenderDrawColor(renderer, GetRValue(itStar->color), GetGValue(itStar->color), GetBValue(itStar->color), SDL_ALPHA_OPAQUE / 2.);
+
+		// SDL_RenderDrawPoint(renderer, x - 1, y - 1);
+		// SDL_RenderDrawPoint(renderer, x - 1, y + 1);
+		// SDL_RenderDrawPoint(renderer, x + 1, y - 1);
+		// SDL_RenderDrawPoint(renderer, x + 1, y + 1);
 	}
 }
 

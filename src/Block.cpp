@@ -117,7 +117,6 @@ void Block::mass_center_and_mass_maj(const Star::range& galaxy)
 
 void Block::divide(Star::range stars)
 {
-	
 	if (stars.begin==stars.end) // pas d'etoile
 	{
 		contains = stars.begin; // pas très utile, permet de clear la memoire de array<Block, 8> si c'était sa valeur précédente
@@ -204,7 +203,6 @@ bool is_in(const Block& block, const Star& star)
 
 void create_blocks(const Float& area, Block& block, Star::range& alive_galaxy)
 {
-	int index_value = 0;
 	block.setSize(area * 3.);
 	block.divide(alive_galaxy);
 }
