@@ -7,10 +7,10 @@ using Vector = glm::tvec3<Float>;
 template <typename float_t>
 constexpr float_t const_pow(float_t x, int y)
 {
-    if (y==1)
-        return x;
-    else
-        return x*const_pow(x,y-1);
+    float_t res=x;
+    for (int i = 1; i < y; i++)
+        res *= x;
+    return res;
 }
 
 class Star;
