@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <fstream>
+#include <thread>
+#include <atomic>
 #include <Utils.h>
 #include <Block.h>
 #include <Star.h>
@@ -10,6 +12,28 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
 #define READ_PARAMETER(value) { if (auto it = parameters.find(#value); it != parameters.end()) value = *it; }
+struct MutexRange {
+	Star::range part;
+	std::atomic<int> ready = 0;
+};
+template <size_t N>
+void make_partitions(std::array<MutexRange, N>& mutparts, Star::range alive_galaxy, size_t total)
+{
+	const size_t nPerPart = total / N;
+	auto currentIt = alive_galaxy.begin, prevIt = alive_galaxy.begin;
+	for (size_t i = 0; i < N - 1; ++i)
+	{
+		for (size_t iIt = 0; iIt < nPerPart; ++iIt, ++currentIt);
+
+		mutparts[i].part = { prevIt, currentIt };
+		mutparts[i].ready = 1;
+
+		prevIt = currentIt;
+	}
+	mutparts.back().part = { currentIt, alive_galaxy.end };
+	mutparts.back().ready = 1;
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -31,6 +55,7 @@ int main(int argc, char* argv[])
 
 	Float	step = 200000.;				// Pas de temps de la simulation (en années)
 	time_t	simulation_time = 600;		// Temps de simulation (en seconde)
+	constexpr size_t nThread = 16;
 	// -------------------------------------------------------------------------------
 	{
 		std::ifstream fileParams((argc == 2) ? argv[1] : "./parameters.json");
@@ -90,32 +115,60 @@ int main(int argc, char* argv[])
 
 	Star::range alive_galaxy = { galaxy.begin(), galaxy.end() };
 	float step2 = step * step;
+	bool stopThreads = false;
+	auto updateStars = [&block, precision, verlet_integration, step, area, real_colors, &stopThreads](MutexRange* mutpart)
+	{
+		using namespace std::chrono_literals;
+		while (mutpart->ready != 1)
+			std::this_thread::sleep_for(2ms);
+		while (!stopThreads)
+		{
+			
+			for (auto itStar = mutpart->part.begin; itStar != mutpart->part.end; ++itStar) // Boucle sur les étoiles de la galaxie
+			{
+				itStar->acceleration_and_density_maj(precision, block);
+
+				if (!(verlet_integration))
+					itStar->speed_maj(step, area);
+
+				itStar->position_maj(step, verlet_integration);
+
+				if (!is_in(block, *itStar))
+					itStar->is_alive = false;
+				else if (!(real_colors))
+					itStar->color_maj();
+			}
+			mutpart->ready = 2;
+			while (mutpart->ready != 1 && !stopThreads)
+				std::this_thread::sleep_for(2ms);
+		}
+	};
+	std::array<std::thread, nThread> mythreads;
+	std::array<MutexRange, nThread> mutparts;
+	for (int i = 0; i < mythreads.size(); ++i)
+	{
+		mutparts[i].ready = 0;
+		mythreads[i] = std::thread(updateStars, &mutparts[i]);
+	}
+	auto totalGalaxy = std::distance(alive_galaxy.begin, alive_galaxy.end);
 	while (true) // Boucle du pas de temps de la simulation
 	{
-		
+		using namespace std::chrono_literals;
 		create_blocks(area, block, alive_galaxy);
-
-		for (auto itStar = alive_galaxy.begin; itStar!= alive_galaxy.end; ++itStar) // Boucle sur les étoiles de la galaxie
+		
+		make_partitions<nThread >(mutparts, alive_galaxy, totalGalaxy);
+		for (auto& mp : mutparts)
+			while (mp.ready != 2) std::this_thread::sleep_for(1ms);
 		{
-			itStar->acceleration_and_density_maj(precision, block);
-
-			if (!(verlet_integration))
-				itStar->speed_maj(step, area);
-
-			itStar->position_maj(step, verlet_integration);
-
-			if (!is_in(block, *itStar))
-				itStar->is_alive = false;
-			else if (!(real_colors))
-				itStar->color_maj();
-		}
+			auto prevEnd = alive_galaxy.end;
 			alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star& star) { return star.is_alive; });
-			SDL_PollEvent(&event);
-			if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.scancode==SDL_SCANCODE_ESCAPE))
-			{
-				SDL_Quit();
-				exit(1);
-			}
+			totalGalaxy -= std::distance(alive_galaxy.end, prevEnd);
+		}
+		SDL_PollEvent(&event);
+		if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.scancode==SDL_SCANCODE_ESCAPE))
+		{
+			break;
+		}
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		SDL_RenderClear(renderer);
@@ -127,6 +180,9 @@ int main(int argc, char* argv[])
 
 		SDL_RenderPresent(renderer);
 	}
+	stopThreads = true;
+	for (auto& thr : mythreads)
+		thr.join();
 
 	if (renderer)
 		SDL_DestroyRenderer(renderer);
