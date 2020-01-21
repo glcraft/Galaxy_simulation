@@ -31,4 +31,3 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 target_include_directories(GalaxySimu PRIVATE "${CMAKE_SOURCE_DIR}/include")
-message("${GalaxySimu_SRC}")

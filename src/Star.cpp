@@ -116,8 +116,8 @@ void Star::acceleration_and_density_maj(const Float& precision, const Block& blo
 
 	acceleration = force_and_density_calculation(precision, *this, block); // Pas de division par la masse de l'étoile (c.f. ligne 131)
 
-	if (glm::length2(acceleration) > max_acceleration*max_acceleration)
-		acceleration = create_spherical(max_acceleration, get_phi(acceleration), get_theta(acceleration));
+	if (glm::length2(acceleration) > max_acceleration* max_acceleration)
+		acceleration = max_acceleration * glm::normalize(acceleration);//create_spherical(max_acceleration, get_phi(acceleration), get_theta(acceleration));
 }
 
 
@@ -127,32 +127,36 @@ void Star::acceleration_and_density_maj(const Float& precision, const Block& blo
 Vector force_and_density_calculation(const Float& precision, Star& star, const Block& block)
 {
 	Vector force = Vector(0.f);
-	if (block.nb_stars==0)
-		return force;
 	{
-		Float distance = glm::distance(star.position, block.mass_center);
+		Vector starToMass = (star.position - block.mass_center);
+		Float distance2 = glm::length2(starToMass);
 		if (block.nb_stars==1)
 		{
 			Star::container::iterator itStar = std::get<0>(block.contains);
-			if (distance!=0.)
+			if (distance2 !=0.)
 			{
-				force += create_spherical(-(G * block.mass) / (distance * distance), get_phi(star.position, block.mass_center), get_theta(star.position, block.mass_center));
+				Float distance = glm::sqrt(distance2);
+				force += (starToMass / distance) *(-(G * block.mass) / distance2);//create_spherical(-(G * block.mass) / (distance * distance), get_phi(star.position, block.mass_center), get_theta(star.position, block.mass_center));
 				star.density += 1. / (distance / LIGHT_YEAR);
 			}
 		}
 		else
 		{
+			Float distance = glm::sqrt(distance2);
 			Float thema = block.size / distance;
 			if (thema < precision)
 			{
-				force += create_spherical(-(G * block.mass) / (distance * distance), get_phi(star.position, block.mass_center), get_theta(star.position, block.mass_center));
+				force += (starToMass / distance) * (-(G * block.mass) / distance2);//create_spherical(-(G * block.mass) / (distance * distance), get_phi(star.position, block.mass_center), get_theta(star.position, block.mass_center));
 				star.density += block.nb_stars / (distance / LIGHT_YEAR);
 			}
 			else
 			{
 				auto& blocks = std::get<1>(block.contains);
 				for (int i = 0; i < 8; i++)
-					force += force_and_density_calculation(precision, star, blocks[i]);
+				{
+					if (blocks[i].nb_stars > 0)
+						force += force_and_density_calculation(precision, star, blocks[i]);
+				}
 			}
 		}
 	}
