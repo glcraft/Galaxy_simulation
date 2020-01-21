@@ -158,15 +158,27 @@ void Block::divide(Star::range stars)
 		};
 		auto& myblocks = std::get<1>(contains);
 		auto partitions_stars = set_octree(stars, position);
+		Float newMass = 0.f;
+		Vector newMassCenter(0);
+		int iAdd = 0;
 		for (int ibloc = 0; ibloc < 8; ibloc++)
 		{
 			// bloc 1
 			myblocks[ibloc] = block;
 			myblocks[ibloc].position = posis[ibloc];
 			// block.stars_maj(galaxy, blocks);
-			block.mass_center_and_mass_maj(partitions_stars[ibloc]);
+			//myblocks[ibloc].mass_center_and_mass_maj(partitions_stars[ibloc]);
 			myblocks[ibloc].divide(partitions_stars[ibloc]);
+
+			if (myblocks[ibloc].nb_stars > 0)
+			{
+				newMass += myblocks[ibloc].mass;
+				newMassCenter += myblocks[ibloc].mass_center * myblocks[ibloc].mass;
+				iAdd++;
+			}
 		}
+		mass = newMass;
+		mass_center = newMassCenter / newMass;
 	}
 	
 	
@@ -188,45 +200,11 @@ bool is_in(const Block& block, const Star& star)
 		&& block.position.z + block.size / 2. > star.position.z && block.position.z - block.size / 2. < star.position.z);
 }
 
-
-
-// Crée le premier bloc
-
-// void initialise_blocks(int& index_value, const Float& area, Star::container& galaxy, std::vector<Block>& blocks)
-// {
-// 	Block block;
-
-// 	block.index = index_value;
-// 	index_value++;
-// 	block.size = area * 3.;
-
-// 	for (int i = 0; i < galaxy.size(); i++)
-// 	{
-// 		if (is_in(block, galaxy[i]))
-// 		{
-// 			block.stars.push_back(i);
-// 			galaxy[i].block_index = block.index;
-
-// 			if (!(block.as_stars))
-// 				block.as_stars = true;
-// 		}
-
-// 		else
-// 			galaxy[i].is_alive = false;
-// 	}
-
-// 	block.mass_center_and_mass_maj(galaxy);
-// 	blocks.push_back(block);
-// }
-
-
-
-// Génère les blocs (l'utilisation de "blocks_temp" ne sert qu'à augmenter la limite des "std:::vector<>" pour pouvoir mettre plus d'étoiles)
+// Génère les blocs
 
 void create_blocks(const Float& area, Block& block, Star::range& alive_galaxy)
 {
 	int index_value = 0;
 	block.setSize(area * 3.);
-	block.mass_center_and_mass_maj(alive_galaxy);
 	block.divide(alive_galaxy);
 }
