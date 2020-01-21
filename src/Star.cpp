@@ -133,10 +133,10 @@ Vector force_and_density_calculation(const Float& precision, Star& star, const B
 		if (block.nb_stars==1)
 		{
 			Star::container::iterator itStar = std::get<0>(block.contains);
-			if (distance2 !=0.)
+			if (distance2 != 0.)
 			{
-				Float inv_distance = 1./glm::sqrt(distance2);
-				force += (starToMass * inv_distance) *(-(G * block.mass) / distance2);
+				Float inv_distance = 1. / glm::sqrt(distance2);
+				force += (starToMass * inv_distance) * (-(G * block.mass) / distance2);
 				star.density += (inv_distance / LIGHT_YEAR);
 			}
 		}
