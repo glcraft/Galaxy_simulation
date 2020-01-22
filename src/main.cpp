@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
 	Float	step = 200000.;				// Pas de temps de la simulation (en années)
 	time_t	simulation_time = 600;		// Temps de simulation (en seconde)
-	constexpr size_t nThread = 16;
+	constexpr size_t nThread = 4;
 	// -------------------------------------------------------------------------------
 	{
 		std::ifstream fileParams((argc == 2) ? argv[1] : "./parameters.json");
@@ -115,23 +115,23 @@ int main(int argc, char* argv[])
 
 	Star::range alive_galaxy = { galaxy.begin(), galaxy.end() };
 	float step2 = step * step;
+	Float currentStep=static_cast<Float>(1.);
 	bool stopThreads = false;
-	auto updateStars = [&block, precision, verlet_integration, step, area, real_colors, &stopThreads](MutexRange* mutpart)
+	auto updateStars = [&block, precision, verlet_integration, step, area, real_colors, &stopThreads, &currentStep](MutexRange* mutpart)
 	{
 		using namespace std::chrono_literals;
 		while (mutpart->ready != 1)
 			std::this_thread::sleep_for(2ms);
 		while (!stopThreads)
 		{
-			
 			for (auto itStar = mutpart->part.begin; itStar != mutpart->part.end; ++itStar) // Boucle sur les étoiles de la galaxie
 			{
 				itStar->acceleration_and_density_maj(precision, block);
 
 				if (!(verlet_integration))
-					itStar->speed_maj(step, area);
+					itStar->speed_maj(step * currentStep, area);
 
-				itStar->position_maj(step, verlet_integration);
+				itStar->position_maj(step * currentStep, verlet_integration);
 
 				if (!is_in(block, *itStar))
 					itStar->is_alive = false;
@@ -151,6 +151,7 @@ int main(int argc, char* argv[])
 		mythreads[i] = std::thread(updateStars, &mutparts[i]);
 	}
 	auto totalGalaxy = std::distance(alive_galaxy.begin, alive_galaxy.end);
+	auto t0 = std::chrono::steady_clock::now();
 	while (true) // Boucle du pas de temps de la simulation
 	{
 		using namespace std::chrono_literals;
@@ -158,7 +159,8 @@ int main(int argc, char* argv[])
 		
 		make_partitions<nThread >(mutparts, alive_galaxy, totalGalaxy);
 		for (auto& mp : mutparts)
-			while (mp.ready != 2) std::this_thread::sleep_for(1ms);
+			while (mp.ready != 2) 
+				std::this_thread::sleep_for(1ms);
 		{
 			auto prevEnd = alive_galaxy.end;
 			alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star& star) { return star.is_alive; });
@@ -179,6 +181,11 @@ int main(int argc, char* argv[])
 		// 	draw_blocks(blocks, block.mass_center, area, zoom, view);
 
 		SDL_RenderPresent(renderer);
+
+		auto t1 = std::chrono::steady_clock::now();
+		std::chrono::duration<Float, std::ratio<1,60>> duree = t1-t0;
+		t0=t1;
+		currentStep = duree.count();
 	}
 	stopThreads = true;
 	for (auto& thr : mythreads)
