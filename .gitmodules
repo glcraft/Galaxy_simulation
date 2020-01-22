@@ -1,0 +1,3 @@
+[submodule "deps/libglw"]
+	path = deps/libglw
+	url = https://github.com/glcraft/libglw

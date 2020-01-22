@@ -26,8 +26,8 @@ target_compile_features(GalaxySimu
     PUBLIC
     cxx_std_20
 )
-
-
+add_subdirectory(deps/libglw)
+add_dependencies(GalaxySimu libglw)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(GalaxySimu
