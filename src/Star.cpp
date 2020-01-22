@@ -30,7 +30,7 @@ Star::Star()
 Star::Star(const Float& initial_speed, const Float& area, const Float& step, const Float& galaxy_thickness)
 {
 	is_alive = true;
-	position = create_spherical((sqrt(random_double(0., 1.)) - 0.5) * area, random_double(0., 2. * PI), PI / 2.);
+	position = create_spherical((sqrt(random_double(0., 1.)) - 0.5) * area, random_double(0., 2. * PI), PI / 2.)*Vector(1);
 	position.z = ((random_double(0., 1.) - 0.5) * (area * galaxy_thickness));
 	speed = create_spherical((((area / 2.) - glm::length(position)) / (area / 2.)) * initial_speed, get_phi(position) + PI / 2., PI / 2.);
 	previous_position = position - speed * step;

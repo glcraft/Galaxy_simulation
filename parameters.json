@@ -1,15 +1,15 @@
 {
     "area" : 500.0,
-    "galaxy_thickness" : 0.2,
-    "precision" : 4.0,
-    "verlet_integration" : true,
+    "galaxy_thickness" : 0.01,
+    "precision" : 1.0,
+    "verlet_integration" : false,
 
-    "stars_number" : 15000,
-    "initial_speed" : 0.0,
-    "black_hole_mass" : 0.0,
-    "is_black_hole" : false,
+    "stars_number" : 10000,
+    "initial_speed" : 3500.0,
+    "black_hole_mass" : 40000.0,
+    "is_black_hole" : true,
 
-    "view" : 0,
+    "view" : 1,
     "zoom" : 800.0,
     "real_colors" : false,
     "show_blocks" : false,
