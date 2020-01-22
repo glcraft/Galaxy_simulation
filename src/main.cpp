@@ -1,12 +1,15 @@
+#define USE_OPENGL 1
+
 #include <algorithm>
 #include <fstream>
 #include <thread>
 #include <atomic>
+#include <SDL2/SDL.h>
+#include <nlohmann/json.hpp>
 #include <Utils.h>
 #include <Block.h>
 #include <Star.h>
-#include <SDL2/SDL.h>
-#include <nlohmann/json.hpp>
+#include <Draw_OGL.h>
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -50,7 +53,7 @@ int main(int argc, char* argv[])
 
 	View	view = default_view;		// Type de vue
 	Float	zoom = 800.;				// Taille de "area" (en pixel)
-	float	real_colors = false;		// Activer la couleur réelle des étoiles
+	bool	real_colors = false;		// Activer la couleur réelle des étoiles
 	bool	show_blocks = false;		// Afficher les blocs
 
 	Float	step = 200000.;				// Pas de temps de la simulation (en années)
@@ -85,12 +88,27 @@ int main(int argc, char* argv[])
 	}
 	SDL_Init(SDL_INIT_VIDEO);
 
-	window = NULL;
-	renderer = NULL;
+	window = nullptr;
+	renderer = nullptr;
+#if USE_OPENGL
+	// Version d'OpenGL
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
+	// Double Buffer
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+	window = SDL_CreateWindow("Galaxy simulation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
+	SDL_GLContext glcont = SDL_GL_CreateContext(window);
+	if(!glcont)
+		throw std::runtime_error("Unable to create GL Context.");
+
+#else
 	SDL_CreateWindowAndRenderer(static_cast<int>(WIDTH), static_cast<int>(HEIGHT), 0, &window, &renderer);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
 	SDL_SetWindowTitle(window, "Galaxy simulation");
+#endif
 	SDL_Event event;
 
 	if (area < 0.1) area = 0.1;
@@ -110,6 +128,8 @@ int main(int argc, char* argv[])
 
 	Star::container galaxy;
 	Block block;
+	DrawGL drawPlugin;
+	drawPlugin.init();
 
 	initialize_galaxy(galaxy, stars_number, area, initial_speed, step, is_black_hole, black_hole_mass, galaxy_thickness);
 
@@ -152,6 +172,7 @@ int main(int argc, char* argv[])
 	}
 	auto totalGalaxy = std::distance(alive_galaxy.begin, alive_galaxy.end);
 	auto t0 = std::chrono::steady_clock::now();
+	glClear(GL_COLOR_BUFFER_BIT);
 	while (true) // Boucle du pas de temps de la simulation
 	{
 		using namespace std::chrono_literals;
@@ -171,16 +192,15 @@ int main(int argc, char* argv[])
 		{
 			break;
 		}
+		drawPlugin.update(alive_galaxy, &event);
+		// SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+		// SDL_RenderClear(renderer);
 
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-		SDL_RenderClear(renderer);
+		// draw_stars(alive_galaxy, block.mass_center, area, zoom, view);
+		drawPlugin.render();
 
-		draw_stars(alive_galaxy, block.mass_center, area, zoom, view);
-
-		// if (show_blocks)
-		// 	draw_blocks(blocks, block.mass_center, area, zoom, view);
-
-		SDL_RenderPresent(renderer);
+		// SDL_RenderPresent(renderer);
+		SDL_GL_SwapWindow(window);
 
 		auto t1 = std::chrono::steady_clock::now();
 		std::chrono::duration<Float, std::ratio<1,60>> duree = t1-t0;
