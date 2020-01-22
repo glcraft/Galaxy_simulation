@@ -26,6 +26,9 @@ void DrawGL::init()
     m_projmat = glm::perspective<float>(70.f, WIDTH/HEIGHT, 0.1f, 1000.f);
     m_viewmat = glm::lookAt(glm::vec3(400,0,0), glm::vec3(0), glm::vec3(0,0,1));
     m_orientation = glm::quat(1,0,0,0);
+    m_mouse_down=false;
+    glPointSize(3.f);
+    glEnable(GL_DEPTH_TEST);
 }
 void DrawGL::render()
 {
