@@ -1,7 +1,9 @@
 #include "Draw_OGL.h"
+#include <libglw/Shaders.h>
 #include <memory>
 #include <stdexcept>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/color_space.hpp>
 
 void DrawGL::init() 
 {
@@ -13,7 +15,8 @@ void DrawGL::init()
     auto vao=std::make_shared<gl::VertexArray>();
     m_VBO.instantiate();
     m_VBO.attachVertexArray(vao);
-    m_VBO.set_attrib(decltype(m_VBO)::Attrib<0>(0));
+    m_VBO.set_attrib(decltype(m_VBO)::Attrib<0>(offsetof(Vertex, pos)));
+    m_VBO.set_attrib(decltype(m_VBO)::Attrib<1>(offsetof(Vertex, col)));
 
     m_shader 
         << gl::sl::Shader<gl::sl::Vertex>("res/shader.vert")
@@ -25,6 +28,7 @@ void DrawGL::init()
 }
 void DrawGL::render()
 {
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     m_shader
         << gl::sl::use
         << gl::UniformRef("projmat", m_projmat)
@@ -59,10 +63,14 @@ void DrawGL::update(Star::range alive_galaxy)
     }
 
     auto verts = m_VBO.map_write();
+    auto v0 = verts;
     for(auto itStar = alive_galaxy.begin; itStar != alive_galaxy.end; ++itStar)
     {
-        *verts = itStar->position/LIGHT_YEAR;
+        verts->pos = itStar->position/LIGHT_YEAR;
+        verts->col = glm::rgbColor(glm::vec3(itStar->density / (3. ), 1., 1.));
         ++verts;
     }
+    auto totalPoints = verts - v0;
+    m_VBO.reserve(totalPoints);
     m_VBO.unmap();
 }
