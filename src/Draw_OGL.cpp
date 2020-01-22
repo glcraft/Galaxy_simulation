@@ -5,15 +5,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/color_space.hpp>
 
+
 void DrawGL::init() 
 {
     glewExperimental = true;
     auto res = glewInit();
     if (res!=GLEW_OK)
         throw std::runtime_error("GLEW Initialization error");
-
-    auto vao=std::make_shared<gl::VertexArray>();
+    gl::Object::SetAutoInstantiate(true);
     m_VBO.instantiate();
+    auto vao=std::make_shared<gl::VertexArray>();
     m_VBO.attachVertexArray(vao);
     m_VBO.set_attrib(decltype(m_VBO)::Attrib<0>(offsetof(Vertex, pos)));
     m_VBO.set_attrib(decltype(m_VBO)::Attrib<1>(offsetof(Vertex, col)));
