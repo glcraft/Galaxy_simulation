@@ -172,8 +172,8 @@ int main(int argc, char* argv[])
 	}
 	auto totalGalaxy = std::distance(alive_galaxy.begin, alive_galaxy.end);
 	auto t0 = std::chrono::steady_clock::now();
-	glClear(GL_COLOR_BUFFER_BIT);
-	while (true) // Boucle du pas de temps de la simulation
+	bool stopProgram=false;
+	while (!stopProgram) // Boucle du pas de temps de la simulation
 	{
 		using namespace std::chrono_literals;
 		create_blocks(area, block, alive_galaxy);
@@ -187,12 +187,15 @@ int main(int argc, char* argv[])
 			alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star& star) { return star.is_alive; });
 			totalGalaxy -= std::distance(alive_galaxy.end, prevEnd);
 		}
-		SDL_PollEvent(&event);
-		if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.scancode==SDL_SCANCODE_ESCAPE))
+		while(SDL_PollEvent(&event))
 		{
-			break;
+			if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.scancode==SDL_SCANCODE_ESCAPE))
+			{
+				stopProgram=true;
+			}
+			drawPlugin.event(&event);
 		}
-		drawPlugin.update(alive_galaxy, &event);
+		drawPlugin.update(alive_galaxy);
 		// SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		// SDL_RenderClear(renderer);
 
