@@ -7,6 +7,7 @@ set(LIBGLW_LIBRARY_ONLY ON CACHE BOOL "Only library needed." FORCE)
 file(GLOB GalaxySimu_SRC
     "src/*.cpp"
     "include/*.h"
+    "include/*.hpp"
 )
 
 find_package(SDL2 CONFIG REQUIRED)
