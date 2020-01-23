@@ -173,11 +173,12 @@ int main(int argc, char* argv[])
 	auto totalGalaxy = std::distance(alive_galaxy.begin, alive_galaxy.end);
 	auto t0 = std::chrono::steady_clock::now();
 	bool stopProgram=false;
+	create_blocks(area, block, alive_galaxy);
 	while (!stopProgram) // Boucle du pas de temps de la simulation
 	{
 		using namespace std::chrono_literals;
-		create_blocks(area, block, alive_galaxy);
-		
+		block.updateNodes();
+		block.updateMass();
 		make_partitions<nThread >(mutparts, alive_galaxy, totalGalaxy);
 		for (auto& mp : mutparts)
 			while (mp.ready != 2) 

@@ -5,6 +5,7 @@
 #include <array>
 #include <algorithm>
 #include <functional>
+#include <cmath>
 
 std::array<Star::range, 8> set_octree(Star::range stars, glm::vec3 pivot)
 {
@@ -36,10 +37,7 @@ std::array<Star::range, 8> set_octree(Star::range stars, glm::vec3 pivot)
 
 Block::Block()
 {
-	as_stars = false;
 	mass_center = Vector(0., 0., 0.);
-	as_children = false;
-	as_parents = false;
 	position = Vector(0., 0., 0.);
 	mass = 0.;
 	size = halfsize = 0.;
@@ -55,23 +53,18 @@ Block::Block(const Block& block)
 	operator=(block);
 }
 
-
-
 // Assignation
 
 Block& Block::operator=(const Block& block)
 {
-	as_stars = block.as_stars;
-	mass_center = block.mass_center;
-	as_children = block.as_children;
-	as_parents = block.as_parents;
-	parent = block.parent;
 	position = block.position;
-	mass = block.mass;
 	size = block.size;
 	halfsize = block.halfsize;
-	contains = block.contains;
+	mass = block.mass;
+	mass_center = block.mass_center;
 	nb_stars = block.nb_stars;
+	parent = block.parent;
+	contains = block.contains;
 	return *this;
 }
 
@@ -123,7 +116,6 @@ void Block::divide(Star::range stars)
 		nb_stars = 0;
 		mass = 0.;
 		mass_center = Vector(0.);
-		as_children = false;
 	}
 	else if (std::next(stars.begin)==stars.end) // une étoile
 	{
@@ -131,56 +123,190 @@ void Block::divide(Star::range stars)
 		nb_stars = 1;
 		mass = stars.begin->mass;
 		mass_center = stars.begin->position;
-		as_children = false;
 	}
 	else
 	{
 		if (contains.index()!=1)
 			contains = std::vector<Block>(8);
-		nb_stars = std::distance(stars.begin, stars.end);
-		as_children = true;
+		//nb_stars = std::distance(stars.begin, stars.end);
 		
 		Block block;
-
-		block.as_parents = true;
 		block.setSize(halfsize);
-
+		const auto quartSize = size / 4.;
 		Vector posis[] = {
-			{position.x - size / 4., position.y - size / 4., position.z - size / 4.},
-			{position.x - size / 4., position.y - size / 4., position.z + size / 4.},
-			{position.x - size / 4., position.y + size / 4., position.z - size / 4.},
-			{position.x - size / 4., position.y + size / 4., position.z + size / 4.},
-			{position.x + size / 4., position.y - size / 4., position.z - size / 4.},
-			{position.x + size / 4., position.y - size / 4., position.z + size / 4.},
-			{position.x + size / 4., position.y + size / 4., position.z - size / 4.},
-			{position.x + size / 4., position.y + size / 4., position.z + size / 4.}
+			{position.x - quartSize, position.y - quartSize, position.z - quartSize},
+			{position.x - quartSize, position.y - quartSize, position.z + quartSize},
+			{position.x - quartSize, position.y + quartSize, position.z - quartSize},
+			{position.x - quartSize, position.y + quartSize, position.z + quartSize},
+			{position.x + quartSize, position.y - quartSize, position.z - quartSize},
+			{position.x + quartSize, position.y - quartSize, position.z + quartSize},
+			{position.x + quartSize, position.y + quartSize, position.z - quartSize},
+			{position.x + quartSize, position.y + quartSize, position.z + quartSize}
 		};
 		auto& myblocks = std::get<1>(contains);
 		auto partitions_stars = set_octree(stars, position);
 		Float newMass = 0.f;
 		Vector newMassCenter(0);
-		int iAdd = 0;
+		nb_stars = 0;
 		for (int ibloc = 0; ibloc < 8; ibloc++)
 		{
-			// bloc 1
 			myblocks[ibloc] = block;
+			myblocks[ibloc].parent = _std::make_observer(this);
 			myblocks[ibloc].position = posis[ibloc];
-			// block.stars_maj(galaxy, blocks);
-			//myblocks[ibloc].mass_center_and_mass_maj(partitions_stars[ibloc]);
 			myblocks[ibloc].divide(partitions_stars[ibloc]);
 
 			if (myblocks[ibloc].nb_stars > 0)
 			{
 				newMass += myblocks[ibloc].mass;
 				newMassCenter += myblocks[ibloc].mass_center * myblocks[ibloc].mass;
-				iAdd++;
+				nb_stars += myblocks[ibloc].nb_stars;
 			}
 		}
 		mass = newMass;
 		mass_center = newMassCenter / newMass;
 	}
+}
+void Block::updateMass(bool deep )
+{
+	if (nb_stars == 0) // pas d'etoile
+	{
+		mass = 0.;
+		mass_center = Vector(0.);
+	}
+	else if (nb_stars == 1) // une étoile
+	{
+		mass = std::get<Star::container::iterator>(contains)->mass;
+		mass_center = std::get<Star::container::iterator>(contains)->position;
+	}
+	else
+	{
+		mass = 0.;
+		mass_center = Vector(0.);
+		auto& children = std::get<std::vector<Block>>(contains);
+		for (auto& node : children)
+		{
+			if (deep)
+				node.updateMass(deep);
+			if (node.nb_stars > 0)
+			{
+				mass += node.mass;
+				mass_center += node.mass_center * node.mass;
+			}
+		}
+		mass_center = mass_center / mass;
+	}
+	bool test = glm::isnan(-mass);
+	int itest2 = 1;
+}
+bool Block::updateNodes()
+{
+	if (nb_stars == 0);
+	else if (nb_stars == 1)
+	{
+		auto itStar = std::get<Star::container::iterator>(contains);
+		if (!is_in(*this, *itStar))
+		{
+			nb_stars = 0;
+			mass = 0;
+			mass_center = position;
+			_std::observer_ptr<Block> searchParent = parent;
+
+			for (; searchParent && !(is_in(*searchParent, *itStar)); --searchParent->nb_stars, searchParent = searchParent->parent);
+			if (searchParent)
+			{
+				--searchParent->nb_stars;
+				searchParent->addStar(itStar);
+			}
+			else
+				itStar->is_alive = false;
+			contains = Star::container::iterator();
+			return true;
+		}
+	}
+	else
+	{
+		bool hasChanged = false;
+		for (auto& node : std::get<std::vector<Block>>(contains))
+			hasChanged |= node.updateNodes();
+		if (hasChanged)
+		{
+			if (nb_stars == 1)
+			{
+				Star::container::iterator itStar;
+				for (auto& node : std::get<std::vector<Block>>(contains))
+				{
+					if (node.nb_stars==1)
+					{
+						itStar = std::get<Star::container::iterator>(node.contains);
+						break;
+					}
+				}
+				contains = itStar;
+			}
+			//updateMass();
+			return true;
+		}
+	}
+	return false;
+}
+void Block::makeOcto()
+{
+	if (contains.index() != 1)
+		contains = std::vector<Block>(8);
+	Block block;
+	block.setSize(halfsize);
+	block.mass = 0.;
+	block.nb_stars=0;
 	
+	const auto quartSize = size / 4.;
+	Vector posis[] = {
+		{position.x - quartSize, position.y - quartSize, position.z - quartSize},
+		{position.x - quartSize, position.y - quartSize, position.z + quartSize},
+		{position.x - quartSize, position.y + quartSize, position.z - quartSize},
+		{position.x - quartSize, position.y + quartSize, position.z + quartSize},
+		{position.x + quartSize, position.y - quartSize, position.z - quartSize},
+		{position.x + quartSize, position.y - quartSize, position.z + quartSize},
+		{position.x + quartSize, position.y + quartSize, position.z - quartSize},
+		{position.x + quartSize, position.y + quartSize, position.z + quartSize}
+	};
+	auto& children = std::get<std::vector<Block>>(contains);
+	for (int iNode = 0; iNode < 8; iNode++)
+	{
+		auto& current_node = children[iNode];
+		current_node = block;
+		current_node.mass_center = block.position;
+		current_node.parent = _std::make_observer(this);
+		current_node.position = posis[iNode];
+	}
+}
+void Block::addStar(Star::container::iterator itStar)
+{
+	if (nb_stars == 0)
+	{
+		contains = itStar;
+		++nb_stars;
+	}
+	else
+	{
+		constexpr auto idx = [](Vector pos1, Vector pos2) {
+			return ((pos1.x > pos2.x)<<2) + ((pos1.y > pos2.y)<<1)  + (pos1.z > pos2.z);
+		};
+		
+		if (nb_stars==1 && contains.index()==0)
+		{
+			auto old = std::get<Star::container::iterator>(contains);
+			assert(old != itStar);
+			makeOcto();
+			auto id = idx(old->position, position);
+			std::get<std::vector<Block>>(contains)[id].addStar(old);
+		}
+		++nb_stars;
+		auto id = idx(itStar->position, position);
+		std::get<std::vector<Block>>(contains)[id].addStar(itStar);
+		int test = 0;
+	}
 	
+	//updateMass();
 }
 void Block::setSize(Float size)
 {
@@ -194,9 +320,9 @@ void Block::setSize(Float size)
 
 bool is_in(const Block& block, const Star& star)
 {
-	return (block.position.x + block.size / 2. > star.position.x && block.position.x - block.size / 2. < star.position.x
-		&& block.position.y + block.size / 2. > star.position.y && block.position.y - block.size / 2. < star.position.y
-		&& block.position.z + block.size / 2. > star.position.z && block.position.z - block.size / 2. < star.position.z);
+	return (block.position.x + block.halfsize > star.position.x && block.position.x - block.halfsize < star.position.x
+		 && block.position.y + block.halfsize > star.position.y && block.position.y - block.halfsize < star.position.y
+		 && block.position.z + block.halfsize > star.position.z && block.position.z - block.halfsize < star.position.z);
 }
 
 // Génère les blocs
