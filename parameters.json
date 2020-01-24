@@ -4,8 +4,8 @@
     "precision" : 1.0,
     "verlet_integration" : false,
 
-    "stars_number" : 20000,
-    "initial_speed" : 0.0,
+    "stars_number" : 30000,
+    "initial_speed" : 500.0,
     "black_hole_mass" : 4000.0,
     "is_black_hole" : false,
 

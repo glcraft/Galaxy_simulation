@@ -4,7 +4,9 @@
 #include <stdexcept>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/color_space.hpp>
-
+#ifdef WIN32
+#include <Windows.h>
+#endif
 
 void DrawGL::init() 
 {
@@ -18,11 +20,25 @@ void DrawGL::init()
     m_VBO.attachVertexArray(vao);
     m_VBO.set_attrib(decltype(m_VBO)::Attrib<0>(offsetof(Vertex, pos)));
     m_VBO.set_attrib(decltype(m_VBO)::Attrib<1>(offsetof(Vertex, col)));
-
-    m_shader 
-        << gl::sl::Shader<gl::sl::Vertex>("res/shader.vert")
-        << gl::sl::Shader<gl::sl::Fragment>("res/shader.frag") 
-        << gl::sl::link;
+    try
+    {
+        m_shader 
+            << gl::sl::Shader<gl::sl::Vertex>("res/shader.vert")
+            << gl::sl::Shader<gl::sl::Geometry>("res/shader.geom")
+            << gl::sl::Shader<gl::sl::Fragment>("res/shader.frag") 
+            << gl::sl::link;
+    }
+    catch(const gl::sl::CompileException& e)
+    {
+#ifdef WIN32
+        MessageBox(nullptr, e.what(), "Erreur de compilation", MB_OK);
+#else
+        std::cerr << e.what() << std::endl;
+#endif
+        exit(1);
+    }
+    
+    
     m_projmat = glm::perspective<float>(70.f, WIDTH/HEIGHT, 0.1f, 1000.f);
     m_viewmat = glm::lookAt(glm::vec3(400,0,0), glm::vec3(0), glm::vec3(0,0,1));
     m_orientation = glm::quat(1,0,0,0);

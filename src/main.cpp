@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
 	Float	step = 200000.;				// Pas de temps de la simulation (en années)
 	time_t	simulation_time = 600;		// Temps de simulation (en seconde)
-	constexpr size_t nThread = 4;
+	constexpr size_t nThread = 8;
 	// -------------------------------------------------------------------------------
 	{
 		std::ifstream fileParams((argc == 2) ? argv[1] : "./parameters.json");
@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
 		block.updateMass(true);
 		make_partitions<nThread >(mutparts, alive_galaxy, totalGalaxy);
 		for (auto& mp : mutparts)
-			while (mp.ready != 2) 
+			while (mp.ready != 2)
 				std::this_thread::sleep_for(1ms);
 		{
 			auto prevEnd = alive_galaxy.end;
