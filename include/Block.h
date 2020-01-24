@@ -13,15 +13,21 @@
 
 class Block
 {
-
 public:
+	using myvariant_t = std::variant<nullptr_t, Star::container::iterator, std::vector<Block>>;
+	enum CoType // Contains Type
+	{
+		CoNull = 0,
+		CoStar,
+		CoBlocks
+	};
 	Vector				position;		// Position du bloc
 	Float				size, halfsize;	// Taille du bloc (en mètres)
 	Float				mass;			// Masse contenue dans le bloc (en kilogrames)
 	Vector				mass_center;	// Centre de gravité du bloc
 	size_t 				nb_stars;		// Nombre d'étoile contenu dans le block
 	_std::observer_ptr<Block>			parent;			// Indice des blocs parents
-	std::variant<Star::container::iterator, std::vector<Block>> contains;
+	myvariant_t contains;
 	
 	Block();
 	Block(const Block& block);
@@ -44,6 +50,16 @@ public:
 	constexpr bool hasParent() const noexcept
 	{
 		return static_cast<bool>(parent);
+	}
+	template <size_t idx>
+	constexpr bool is() const
+	{
+		return contains.index() == idx;
+	}
+	template <size_t idx>
+	static constexpr bool is(const myvariant_t& contains)
+	{
+		return contains.index() == idx;
 	}
 };
 

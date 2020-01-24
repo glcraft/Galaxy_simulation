@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
 	{
 		using namespace std::chrono_literals;
 		block.updateNodes();
-		block.updateMass();
+		block.updateMass(true);
 		make_partitions<nThread >(mutparts, alive_galaxy, totalGalaxy);
 		for (auto& mp : mutparts)
 			while (mp.ready != 2) 

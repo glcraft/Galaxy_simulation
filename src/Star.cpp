@@ -130,9 +130,11 @@ Vector force_and_density_calculation(const Float& precision, Star& star, const B
 	{
 		Vector starToMass = (star.position - block.mass_center);
 		Float distance2 = glm::length2(starToMass);
-		if (block.nb_stars==1)
+		if (block.is<Block::CoNull>())
+			return force;
+		if (block.is<Block::CoStar>())
 		{
-			Star::container::iterator itStar = std::get<0>(block.contains);
+			Star::container::iterator itStar = std::get<Block::CoStar>(block.contains);
 			if (distance2 != 0.)
 			{
 				Float inv_distance = 1. / glm::sqrt(distance2);
@@ -144,6 +146,7 @@ Vector force_and_density_calculation(const Float& precision, Star& star, const B
 		{
 			Float distance = glm::sqrt(distance2);
 			Float thema = block.size / distance;
+			
 			if (thema < precision)
 			{
 				force += (starToMass / distance) * (-(G * block.mass) / distance2);
@@ -151,7 +154,7 @@ Vector force_and_density_calculation(const Float& precision, Star& star, const B
 			}
 			else
 			{
-				auto& blocks = std::get<1>(block.contains);
+				auto& blocks = std::get<Block::CoBlocks>(block.contains);
 				for (int i = 0; i < 8; i++)
 				{
 					if (blocks[i].nb_stars > 0)

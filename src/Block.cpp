@@ -112,7 +112,7 @@ void Block::divide(Star::range stars)
 {
 	if (stars.begin==stars.end) // pas d'etoile
 	{
-		contains = stars.begin; // pas très utile, permet de clear la memoire de array<Block, 8> si c'était sa valeur précédente
+		contains = nullptr; // pas très utile, permet de clear la memoire de array<Block, 8> si c'était sa valeur précédente
 		nb_stars = 0;
 		mass = 0.;
 		mass_center = Vector(0.);
@@ -126,7 +126,7 @@ void Block::divide(Star::range stars)
 	}
 	else
 	{
-		if (contains.index()!=1)
+		if (!is<CoBlocks>(contains))
 			contains = std::vector<Block>(8);
 		//nb_stars = std::distance(stars.begin, stars.end);
 		
@@ -143,7 +143,7 @@ void Block::divide(Star::range stars)
 			{position.x + quartSize, position.y + quartSize, position.z - quartSize},
 			{position.x + quartSize, position.y + quartSize, position.z + quartSize}
 		};
-		auto& myblocks = std::get<1>(contains);
+		auto& myblocks = std::get<CoBlocks>(contains);
 		auto partitions_stars = set_octree(stars, position);
 		Float newMass = 0.f;
 		Vector newMassCenter(0);
@@ -168,21 +168,25 @@ void Block::divide(Star::range stars)
 }
 void Block::updateMass(bool deep )
 {
-	if (nb_stars == 0) // pas d'etoile
+	if (is<CoNull>(contains)) // pas d'etoile
 	{
 		mass = 0.;
 		mass_center = Vector(0.);
+		nb_stars = 0;
 	}
-	else if (nb_stars == 1) // une étoile
+	else if (is<CoStar>(contains)) // une étoile
 	{
-		mass = std::get<Star::container::iterator>(contains)->mass;
-		mass_center = std::get<Star::container::iterator>(contains)->position;
+		mass = std::get<CoStar>(contains)->mass;
+		mass_center = std::get<CoStar>(contains)->position;
+		nb_stars = 1;
 	}
 	else
 	{
 		mass = 0.;
 		mass_center = Vector(0.);
-		auto& children = std::get<std::vector<Block>>(contains);
+		auto& children = std::get<CoBlocks>(contains);
+		nb_stars = 0;
+
 		for (auto& node : children)
 		{
 			if (deep)
@@ -191,35 +195,32 @@ void Block::updateMass(bool deep )
 			{
 				mass += node.mass;
 				mass_center += node.mass_center * node.mass;
+				nb_stars += node.nb_stars;
 			}
 		}
 		mass_center = mass_center / mass;
 	}
-	bool test = glm::isnan(-mass);
-	int itest2 = 1;
 }
 bool Block::updateNodes()
 {
-	if (nb_stars == 0);
-	else if (nb_stars == 1)
+	if (is<CoNull>(contains)) // pas d'etoile
 	{
-		auto itStar = std::get<Star::container::iterator>(contains);
+	}
+	else if (is<CoStar>(contains)) // une étoile
+	{
+		auto itStar = std::get<CoStar>(contains);
 		if (!is_in(*this, *itStar))
 		{
-			nb_stars = 0;
-			mass = 0;
-			mass_center = position;
 			_std::observer_ptr<Block> searchParent = parent;
 
-			for (; searchParent && !(is_in(*searchParent, *itStar)); --searchParent->nb_stars, searchParent = searchParent->parent);
+			for (; searchParent && !(is_in(*searchParent, *itStar)); searchParent = searchParent->parent);
 			if (searchParent)
 			{
-				--searchParent->nb_stars;
 				searchParent->addStar(itStar);
 			}
 			else
 				itStar->is_alive = false;
-			contains = Star::container::iterator();
+			contains = nullptr;
 			return true;
 		}
 	}
@@ -230,20 +231,24 @@ bool Block::updateNodes()
 			hasChanged |= node.updateNodes();
 		if (hasChanged)
 		{
-			if (nb_stars == 1)
+			Star::container::iterator itStar;
+			int nCoStar = 0;
+			for (auto& node : std::get<std::vector<Block>>(contains))
 			{
-				Star::container::iterator itStar;
-				for (auto& node : std::get<std::vector<Block>>(contains))
+				if (is<CoBlocks>(node.contains))
 				{
-					if (node.nb_stars==1)
-					{
-						itStar = std::get<Star::container::iterator>(node.contains);
-						break;
-					}
+					nCoStar = 2;
+					break;
 				}
-				contains = itStar;
+				if (is<CoStar>(node.contains))
+				{
+					itStar = std::get<Star::container::iterator>(node.contains);
+					nCoStar += 1;
+				}
 			}
-			//updateMass();
+			if (nCoStar==1)
+				contains = itStar;
+			
 			return true;
 		}
 	}
@@ -251,7 +256,7 @@ bool Block::updateNodes()
 }
 void Block::makeOcto()
 {
-	if (contains.index() != 1)
+	if (!is<CoBlocks>(contains))
 		contains = std::vector<Block>(8);
 	Block block;
 	block.setSize(halfsize);
@@ -269,7 +274,7 @@ void Block::makeOcto()
 		{position.x + quartSize, position.y + quartSize, position.z - quartSize},
 		{position.x + quartSize, position.y + quartSize, position.z + quartSize}
 	};
-	auto& children = std::get<std::vector<Block>>(contains);
+	auto& children = std::get<CoBlocks>(contains);
 	for (int iNode = 0; iNode < 8; iNode++)
 	{
 		auto& current_node = children[iNode];
@@ -281,10 +286,9 @@ void Block::makeOcto()
 }
 void Block::addStar(Star::container::iterator itStar)
 {
-	if (nb_stars == 0)
+	if (is<CoNull>(contains))
 	{
 		contains = itStar;
-		++nb_stars;
 	}
 	else
 	{
@@ -292,18 +296,16 @@ void Block::addStar(Star::container::iterator itStar)
 			return ((pos1.x > pos2.x)<<2) + ((pos1.y > pos2.y)<<1)  + (pos1.z > pos2.z);
 		};
 		
-		if (nb_stars==1 && contains.index()==0)
+		if (is<CoStar>(contains))
 		{
-			auto old = std::get<Star::container::iterator>(contains);
+			auto old = std::get<CoStar>(contains);
 			assert(old != itStar);
 			makeOcto();
 			auto id = idx(old->position, position);
-			std::get<std::vector<Block>>(contains)[id].addStar(old);
+			std::get<CoBlocks>(contains)[id].addStar(old);
 		}
-		++nb_stars;
 		auto id = idx(itStar->position, position);
-		std::get<std::vector<Block>>(contains)[id].addStar(itStar);
-		int test = 0;
+		std::get<CoBlocks>(contains)[id].addStar(itStar);
 	}
 	
 	//updateMass();
