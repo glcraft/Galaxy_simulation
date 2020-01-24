@@ -1,4 +1,5 @@
 #define USE_OPENGL 1
+#define VARYING_TIME 0
 
 #include <algorithm>
 #include <fstream>
@@ -206,12 +207,15 @@ int main(int argc, char* argv[])
 		drawPlugin.render();
 
 		// SDL_RenderPresent(renderer);
-		SDL_GL_SwapWindow(window);
-
+		
+#if VARYING_TIME
 		auto t1 = std::chrono::steady_clock::now();
 		std::chrono::duration<Float, std::ratio<1,60>> duree = t1-t0;
 		t0=t1;
 		currentStep = duree.count();
+#else
+			currentStep = 1.;
+#endif
 	}
 	stopThreads = true;
 	for (auto& thr : mythreads)
