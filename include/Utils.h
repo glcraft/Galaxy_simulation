@@ -29,8 +29,8 @@ enum View { default_view, xy, xz, yz };		// Vues possibles de la simulation
 
 extern SDL_Renderer* renderer;
 
-int random_int(const int& min, const int& max);
-Float random_double(const Float& min, const Float& max);
+int random_int(int min, int max);
+Float random_double(Float min, Float max);
 // draw_stars in Star.h
 
 // void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);

@@ -3,24 +3,28 @@
 #include <glm/glm.hpp>
 #include <Star.h>
 #include <vector>
+#include <random>
 #include <SDL2/SDL.h>
 
-
+std::random_device rd;  //Will be used to obtain a seed for the random number engine
+std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
 
 // Donne un int aléatoire entre deux bornes
 
-int random_int(const int& min, const int& max)
+int random_int(int min, int max)
 {
-	return rand() % (max - min) + min;
+	std::uniform_int_distribution<> dis(min, max);
+	return dis(gen);
 }
 
 
 
 // Donne un Float aléatoire entre deux bornes
 
-Float random_double(const Float& min, const Float& max)
+Float random_double(Float min, Float max)
 {
-	return (Float(rand()) / Float(RAND_MAX)) * (max - min) + min;
+    std::uniform_real_distribution<> dis(min, max);
+	return dis(gen);
 }
 
 
