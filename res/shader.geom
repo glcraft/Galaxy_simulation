@@ -3,13 +3,14 @@ layout(points) in;
 layout(triangle_strip, max_vertices = 4) out;
 in vec3 geom_col[]; // Sortie du vertex shader, pour chaque sommet
 out vec3 frag_col;
+out vec2 frag_uv;
 
 uniform mat4 projmat;
 
 void set_vertex(vec2 pos)
 {
     gl_Position = projmat * (gl_in[0].gl_Position + vec4(pos*1., 0.0, 0.0));
-    
+    frag_uv = pos;
     EmitVertex();
 }
 void main()
