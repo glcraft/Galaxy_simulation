@@ -214,10 +214,7 @@ bool Block::updateNodes()
 		{
 			_std::observer_ptr<Block> searchParent = parent;
 
-			for (; searchParent && !(is_in(*searchParent, *itStar)); searchParent = searchParent->parent)
-			{
-
-			}
+			for (; searchParent && !(is_in(*searchParent, *itStar)); searchParent = searchParent->parent);
 			if (searchParent)
 			{
 				searchParent->addStar(itStar);
@@ -252,6 +249,8 @@ bool Block::updateNodes()
 			}
 			if (nCoStar==1)
 				contains = itStar;
+			if (nCoStar==0)
+				contains = nullptr;
 			
 			return true;
 		}
