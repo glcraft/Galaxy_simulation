@@ -40,7 +40,7 @@ void DrawGL::render()
         << gl::UniformStatic("modelmat", glm::toMat4(m_orientation));
     m_VBO.draw(GL_POINTS);
 
-    SDL_GL_SwapWindow(m_window);
+    SDL_GL_SwapWindow(m_window.get());
 }
 void DrawGL::event(SDL_Event* sdlevent)
 {
