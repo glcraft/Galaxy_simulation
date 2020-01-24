@@ -31,7 +31,7 @@ Float random_double(Float min, Float max)
 
 // Affiche les étoiles de la galaxie
 
-void draw_stars(Star::range& alive_galaxy, const Vector& mass_center, const Float& area, const Float& zoom, const View& view)
+void draw_stars(Star::range& alive_galaxy, const Vector& mass_center, Float area, Float zoom, const View& view)
 {
 	Float x;
 	Float y;
@@ -90,7 +90,7 @@ void draw_stars(Star::range& alive_galaxy, const Vector& mass_center, const Floa
 
 // Affiche les blocs (ne fonctionne pas en vue "delault_view")
 
-void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, const Float& area, const Float& zoom, const View& view)
+void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, Float area, Float zoom, const View& view)
 {
 	if (view == default_view)
 		return;
@@ -145,7 +145,7 @@ void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, co
 
 // Donne la valeur cartésienne x à partir des coordonnées sphériques (en mètres)
 
-Float get_x(const Float& radius, const Float& phi, const Float& theta)
+Float get_x(Float radius, Float phi, Float theta)
 {
 	return glm::cos(phi) * glm::sin(theta) * radius;
 }
@@ -154,7 +154,7 @@ Float get_x(const Float& radius, const Float& phi, const Float& theta)
 
 // Donne la valeur cartésienne y à partir des coordonnées sphériques (en mètres)
 
-Float get_y(const Float& radius, const Float& phi, const Float& theta)
+Float get_y(Float radius, Float phi, Float theta)
 {
 	return glm::sin(phi) * glm::sin(theta) * radius;
 }
@@ -163,14 +163,14 @@ Float get_y(const Float& radius, const Float& phi, const Float& theta)
 
 // Donne la valeur cartésienne z à partir des coordonnées sphériques (en mètres)
 
-Float get_z(const Float& radius, const Float& phi, const Float& theta)
+Float get_z(Float radius, Float phi, Float theta)
 {
 	return glm::cos(theta) * radius;
 }
 
 // Construit un vecteur à partir de ses coordonnées sphériques
 
-Vector create_spherical(const Float& radius, const Float& phi, const Float& theta)
+Vector create_spherical(Float radius, Float phi, Float theta)
 {
 	return Vector(get_x(radius, phi, theta), get_y(radius, phi, theta), get_z(radius, phi, theta));
 }

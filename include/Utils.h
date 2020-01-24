@@ -34,7 +34,7 @@ Float random_double(Float min, Float max);
 // draw_stars in Star.h
 
 // void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);
-Vector create_spherical(const Float& radius, const Float& phi, const Float& theta);
+Vector create_spherical(Float radius, Float phi, Float theta);
 Float get_phi(Vector vector);
 Float get_theta(Vector vector);
 Float get_phi(Vector point_1, Vector point_2);
