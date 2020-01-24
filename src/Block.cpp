@@ -112,7 +112,7 @@ void Block::divide(Star::range stars)
 {
 	if (stars.begin==stars.end) // pas d'etoile
 	{
-		contains = nullptr; // pas très utile, permet de clear la memoire de array<Block, 8> si c'était sa valeur précédente
+		contains = nullptr;
 		nb_stars = 0;
 		mass = 0.;
 		mass_center = Vector(0.);
@@ -168,13 +168,13 @@ void Block::divide(Star::range stars)
 }
 void Block::updateMass(bool deep )
 {
-	if (is<CoNull>(contains)) // pas d'etoile
+	if (is<CoNull>()) // pas d'etoile
 	{
 		mass = 0.;
 		mass_center = Vector(0.);
 		nb_stars = 0;
 	}
-	else if (is<CoStar>(contains)) // une étoile
+	else if (is<CoStar>()) // une étoile
 	{
 		mass = std::get<CoStar>(contains)->mass;
 		mass_center = std::get<CoStar>(contains)->position;
@@ -191,13 +191,14 @@ void Block::updateMass(bool deep )
 		{
 			if (deep)
 				node.updateMass(deep);
-			if (node.nb_stars > 0)
+			if (!node.is<CoNull>())
 			{
 				mass += node.mass;
 				mass_center += node.mass_center * node.mass;
 				nb_stars += node.nb_stars;
 			}
 		}
+		assert(nb_stars != 0);
 		mass_center = mass_center / mass;
 	}
 }
@@ -213,7 +214,10 @@ bool Block::updateNodes()
 		{
 			_std::observer_ptr<Block> searchParent = parent;
 
-			for (; searchParent && !(is_in(*searchParent, *itStar)); searchParent = searchParent->parent);
+			for (; searchParent && !(is_in(*searchParent, *itStar)); searchParent = searchParent->parent)
+			{
+
+			}
 			if (searchParent)
 			{
 				searchParent->addStar(itStar);
