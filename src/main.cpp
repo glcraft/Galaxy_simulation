@@ -202,7 +202,7 @@ int main(int argc, char* argv[])
 			{
 				stopProgram=true;
 			}
-			if (event.type == SDL_KEYDOWN && event.key.keysym.scancode==SDL_SCANCODE_RETURN)
+			if (event.type == SDL_KEYDOWN && event.key.keysym.scancode==SDL_SCANCODE_SPACE)
 				pauseSimulation=!pauseSimulation;
 			drawPlugin.event(&event);
 		}
