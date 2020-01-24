@@ -104,6 +104,8 @@ int main(int argc, char* argv[])
 	if(!glcont)
 		throw std::runtime_error("Unable to create GL Context.");
 
+	DrawGL drawPlugin;
+	drawPlugin.setWindow(_std::make_observer(window));
 #else
 	SDL_CreateWindowAndRenderer(static_cast<int>(WIDTH), static_cast<int>(HEIGHT), 0, &window, &renderer);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
@@ -128,7 +130,7 @@ int main(int argc, char* argv[])
 
 	Star::container galaxy;
 	Block block;
-	DrawGL drawPlugin;
+	
 	drawPlugin.init();
 
 	initialize_galaxy(galaxy, stars_number, area, initial_speed, step, is_black_hole, black_hole_mass, galaxy_thickness);
