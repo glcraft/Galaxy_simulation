@@ -1,5 +1,5 @@
 #define USE_OPENGL 1
-#define VARYING_TIME 0
+#define VARYING_TIME 1
 
 #include <algorithm>
 #include <fstream>
@@ -176,20 +176,24 @@ int main(int argc, char* argv[])
 	auto totalGalaxy = std::distance(alive_galaxy.begin, alive_galaxy.end);
 	auto t0 = std::chrono::steady_clock::now();
 	bool stopProgram=false;
+	bool pauseSimulation=false;
 	create_blocks(area, block, alive_galaxy);
 	while (!stopProgram) // Boucle du pas de temps de la simulation
 	{
 		using namespace std::chrono_literals;
-		block.updateNodes();
-		block.updateMass(true);
-		make_partitions<nThread >(mutparts, alive_galaxy, totalGalaxy);
-		for (auto& mp : mutparts)
-			while (mp.ready != 2)
-				std::this_thread::sleep_for(1ms);
+		if (!pauseSimulation)
 		{
-			auto prevEnd = alive_galaxy.end;
-			alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star& star) { return star.is_alive; });
-			totalGalaxy -= std::distance(alive_galaxy.end, prevEnd);
+			block.updateNodes();
+			block.updateMass(true);
+			make_partitions<nThread >(mutparts, alive_galaxy, totalGalaxy);
+			for (auto& mp : mutparts)
+				while (mp.ready != 2)
+					std::this_thread::sleep_for(1ms);
+			{
+				auto prevEnd = alive_galaxy.end;
+				alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star& star) { return star.is_alive; });
+				totalGalaxy -= std::distance(alive_galaxy.end, prevEnd);
+			}
 		}
 		while(SDL_PollEvent(&event))
 		{
@@ -197,6 +201,8 @@ int main(int argc, char* argv[])
 			{
 				stopProgram=true;
 			}
+			if (event.type == SDL_KEYDOWN && event.key.keysym.scancode==SDL_SCANCODE_RETURN)
+				pauseSimulation=!pauseSimulation;
 			drawPlugin.event(&event);
 		}
 		drawPlugin.update(alive_galaxy);
