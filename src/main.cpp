@@ -14,14 +14,15 @@
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+constexpr int nAxis = 3;
 
 #define READ_PARAMETER(value) { if (auto it = parameters.find(#value); it != parameters.end()) value = *it; }
 struct MutexRange {
-	Star::range part;
+	Star<nAxis>::range part;
 	std::atomic<int> ready = 0;
 };
 template <size_t N>
-void make_partitions(std::array<MutexRange, N>& mutparts, Star::range alive_galaxy, size_t total)
+void make_partitions(std::array<MutexRange, N>& mutparts, Star<nAxis>::range alive_galaxy, size_t total)
 {
 	const size_t nPerPart = total / N;
 	auto currentIt = alive_galaxy.begin, prevIt = alive_galaxy.begin;
@@ -129,14 +130,25 @@ int main(int argc, char* argv[])
 	black_hole_mass *= SOLAR_MASS;
 	step *= YEAR;
 
-	Star::container galaxy;
+	Star<nAxis>::container galaxy;
 	Block block;
 	
 	drawPlugin.init();
 
-	initialize_galaxy(galaxy, stars_number, area, initial_speed, step, is_black_hole, black_hole_mass, galaxy_thickness);
+	auto init_star = [area, galaxy_thickness, initial_speed, step](Star<3>& star) {
 
-	Star::range alive_galaxy = { galaxy.begin(), galaxy.end() };
+		star.position = create_spherical((sqrt(random_double(0., 1.)) - 0.5) * area, random_double(0., 2. * PI), PI / 2.) * Vector3(1);
+		star.position.z = ((random_double(0., 1.) - 0.5) * (area * galaxy_thickness));
+		star.speed = glm::normalize(Vector3(-star.position.y, star.position.x, 0.)) * initial_speed;//create_spherical((((area / 2.) - glm::length(position)) / (area / 2.)) * initial_speed, get_phi(position) + PI / 2., PI / 2.);
+		star.previous_position = star.position - star.speed * step;
+		star.mass = random_double(2.1, 16 / (glm::length(star.position)/LIGHT_YEAR)) * SOLAR_MASS;
+	};
+	for (int i = 0; i < stars_number; ++i)
+	{
+		galaxy.emplace_back(init_star);
+	}
+
+	Star<nAxis>::range alive_galaxy = { galaxy.begin(), galaxy.end() };
 	float step2 = step * step;
 	Float currentStep=static_cast<Float>(1.);
 	bool stopThreads = false;
@@ -149,7 +161,7 @@ int main(int argc, char* argv[])
 		{
 			for (auto itStar = mutpart->part.begin; itStar != mutpart->part.end; ++itStar) // Boucle sur les étoiles de la galaxie
 			{
-				itStar->acceleration_and_density_maj(precision, block);
+				acceleration_and_density_maj(precision, *itStar, block);
 
 				if (!(verlet_integration))
 					itStar->speed_maj(step * currentStep, area);
@@ -190,11 +202,10 @@ int main(int argc, char* argv[])
 			for (auto& mp : mutparts)
 				while (mp.ready != 2)
 					std::this_thread::sleep_for(1ms);
-			{
-				auto prevEnd = alive_galaxy.end;
-				alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star& star) { return star.is_alive; });
-				totalGalaxy -= std::distance(alive_galaxy.end, prevEnd);
-			}
+			
+			auto prevEnd = alive_galaxy.end;
+			alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star<3>& star) { return star.is_alive; });
+			totalGalaxy -= std::distance(alive_galaxy.end, prevEnd);
 		}
 		while(SDL_PollEvent(&event))
 		{
@@ -206,7 +217,7 @@ int main(int argc, char* argv[])
 				pauseSimulation=!pauseSimulation;
 			drawPlugin.event(&event);
 		}
-		drawPlugin.update(alive_galaxy);
+		drawPlugin.update<nAxis>(alive_galaxy);
 		// SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		// SDL_RenderClear(renderer);
 

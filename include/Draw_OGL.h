@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/color_space.hpp>
 #include <libglw/GLClass.h>
 #include <libglw/Shaders.h>
 #include "mymemory.hpp"
@@ -14,7 +15,26 @@ class DrawGL : public Draw
 public:
     virtual void init() override;
     virtual void event(SDL_Event* sdlevent) override;
-    virtual void update(Star::range alive_galaxy) override;
+    template <int N>
+    void update(typename Star<N>::range alive_galaxy)
+    {
+        if (m_VBO.size() == 0)
+        {
+            m_VBO.reserve(std::distance(alive_galaxy.begin, alive_galaxy.end));
+        }
+
+        auto verts = m_VBO.map_write();
+        auto v0 = verts;
+        for (auto itStar = alive_galaxy.begin; itStar != alive_galaxy.end; ++itStar)
+        {
+            verts->pos = itStar->position / LIGHT_YEAR;
+            verts->col = glm::rgbColor(glm::vec3(itStar->density / (3.), 1., 1.));
+            ++verts;
+        }
+        auto totalPoints = verts - v0;
+        m_VBO.reserve(totalPoints);
+        m_VBO.unmap();
+    }
     virtual void render() override;
 
     void setWindow(_std::observer_ptr<SDL_Window> win)

@@ -3,7 +3,7 @@
 #include <memory>
 #include <stdexcept>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/color_space.hpp>
+
 #ifdef WIN32
 #include <Windows.h>
 #endif
@@ -81,23 +81,4 @@ void DrawGL::event(SDL_Event* sdlevent)
         q = glm::angleAxis<float>(static_cast<float>(sdlevent->motion.yrel)/100.f, glm::vec3(0,1,0)) * q;
         m_orientation=q*m_orientation;
     }
-}
-void DrawGL::update(Star::range alive_galaxy)
-{
-    if (m_VBO.size()==0)
-    {
-        m_VBO.reserve(std::distance(alive_galaxy.begin, alive_galaxy.end));
-    }
-
-    auto verts = m_VBO.map_write();
-    auto v0 = verts;
-    for(auto itStar = alive_galaxy.begin; itStar != alive_galaxy.end; ++itStar)
-    {
-        verts->pos = itStar->position/LIGHT_YEAR;
-        verts->col = glm::rgbColor(glm::vec3(itStar->density / (3. ), 1., 1.));
-        ++verts;
-    }
-    auto totalPoints = verts - v0;
-    m_VBO.reserve(totalPoints);
-    m_VBO.unmap();
 }

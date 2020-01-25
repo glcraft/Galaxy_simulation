@@ -2,8 +2,12 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <SDL2/SDL.h>
+
 using Float = double;
-using Vector = glm::tvec3<Float>;
+template <int N>
+using Vector = glm::vec<N, Float>;
+using Vector3 = Vector<3>;
+
 template <typename float_t>
 constexpr float_t const_pow(float_t x, int y)
 {
@@ -12,9 +16,6 @@ constexpr float_t const_pow(float_t x, int y)
         res *= x;
     return res;
 }
-
-class Star;
-class Block;
 
 constexpr Float LIGHT_YEAR = (9.461 * const_pow<Float>(10, 15));
 constexpr Float PI = 3.14159265;
@@ -33,12 +34,12 @@ int random_int(int min, int max);
 Float random_double(Float min, Float max);
 // draw_stars in Star.h
 
-// void draw_blocks(const std::vector<Block>& blocks, const Vector& mass_center, const Float& area, const Float& zoom, const View& view);
-Vector create_spherical(Float radius, Float phi, Float theta);
-Float get_phi(Vector vector);
-Float get_theta(Vector vector);
-Float get_phi(Vector point_1, Vector point_2);
-Float get_theta(Vector point_1, Vector point_2);
+// void draw_blocks(const std::vector<Block>& blocks, const Vector3& mass_center, const Float& area, const Float& zoom, const View& view);
+Vector3 create_spherical(Float radius, Float phi, Float theta);
+Float get_phi(Vector3 vector);
+Float get_theta(Vector3 vector);
+Float get_phi(Vector3 point_1, Vector3 point_2);
+Float get_theta(Vector3 point_1, Vector3 point_2);
 
 constexpr uint32_t RGB(uint8_t r, uint8_t g, uint8_t b)
 {
