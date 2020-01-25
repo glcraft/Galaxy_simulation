@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 	step *= YEAR;
 
 	Star<nAxis>::container galaxy;
-	Block block;
+	Block<nAxis> block;
 	
 	drawPlugin.init();
 
@@ -204,7 +204,7 @@ int main(int argc, char* argv[])
 					std::this_thread::sleep_for(1ms);
 			
 			auto prevEnd = alive_galaxy.end;
-			alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star<3>& star) { return star.is_alive; });
+			alive_galaxy.end = std::partition(alive_galaxy.begin, alive_galaxy.end, [](const Star<nAxis>& star) { return star.is_alive; });
 			totalGalaxy -= std::distance(alive_galaxy.end, prevEnd);
 		}
 		while(SDL_PollEvent(&event))

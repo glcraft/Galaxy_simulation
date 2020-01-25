@@ -5,7 +5,6 @@ project(GalaxySimu)
 set(LIBGLW_LIBRARY_ONLY ON CACHE BOOL "Only library needed." FORCE)
 
 file(GLOB GalaxySimu_SRC
-    "src/Block.cpp"
     "src/Draw_OGL.cpp"
     "src/main.cpp"
     "src/Utils.cpp"
