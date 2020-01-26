@@ -349,12 +349,24 @@ template <int N>
 void acceleration_and_density_maj(const Float& precision, Star<N>& star, const Block<N>& block)
 {
 	star.density = 0.;
-	Float max_acceleration = 0.0000000005; // Permet de limiter l'erreur due au pas de temps (à régler en fonction du pas de temps)
+	Float max_acceleration = 0.0000005; // Permet de limiter l'erreur due au pas de temps (à régler en fonction du pas de temps)
 	typename Star<N>::container::iterator itStarFound;
+	auto prevAcc = star.acceleration;
 	star.acceleration = force_and_density_calculation(precision, star, block, itStarFound); // Pas de division par la masse de l'étoile (c.f. ligne 131)
 
 	if (glm::length2(star.acceleration) > max_acceleration* max_acceleration)
-		star.acceleration = max_acceleration * glm::normalize(star.acceleration);
+	{
+		if (itStarFound!= typename Star<N>::container::iterator())
+		{
+			star.mass += itStarFound->mass;
+			star.position = (itStarFound->position + star.position) / static_cast<Float>(2);
+			star.acceleration = prevAcc;
+			//itStarFound->is_alive = false;
+			itStarFound->position = Vector<N>(std::numeric_limits<Float>::infinity());
+		}
+		else
+			star.acceleration = max_acceleration * glm::normalize(star.acceleration);
+	}
 }
 template <int N, int cN>
 struct Test
