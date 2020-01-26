@@ -5,5 +5,5 @@ out vec4 outColor;
 
 void main()
 {
-    outColor = vec4(frag_col, 0.2*clamp(1-length(frag_uv), 0., 1.));
+    outColor = vec4(frag_col, 0.5*clamp(1-length(frag_uv), 0., 1.));
 }

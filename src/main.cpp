@@ -1,5 +1,5 @@
 #define USE_OPENGL 1
-#define VARYING_TIME 1
+#define VARYING_TIME 0
 
 #include <algorithm>
 #include <fstream>
@@ -38,6 +38,7 @@ void make_partitions(std::array<MutexRange, N>& mutparts, Star<nAxis>::range ali
 	mutparts.back().part = { currentIt, alive_galaxy.end };
 	mutparts.back().ready = 1;
 }
+
 
 
 int main(int argc, char* argv[])
@@ -134,18 +135,55 @@ int main(int argc, char* argv[])
 	Block<nAxis> block;
 	
 	drawPlugin.init();
-
-	auto init_star = [area, galaxy_thickness, initial_speed, step](Star<3>& star) {
+	std::function<void(Star<nAxis>&)> init_star;
+	init_star = [area, galaxy_thickness, initial_speed, step](Star<3>& star) {
 
 		star.position = create_spherical((sqrt(random_double(0., 1.)) - 0.5) * area, random_double(0., 2. * PI), PI / 2.) * Vector3(1);
 		star.position.z = ((random_double(0., 1.) - 0.5) * (area * galaxy_thickness));
 		star.speed = glm::normalize(Vector3(-star.position.y, star.position.x, 0.)) * initial_speed;//create_spherical((((area / 2.) - glm::length(position)) / (area / 2.)) * initial_speed, get_phi(position) + PI / 2., PI / 2.);
 		star.previous_position = star.position - star.speed * step;
-		star.mass = random_double(2.1, 16 / (glm::length(star.position)/LIGHT_YEAR)) * SOLAR_MASS;
+		Float min = glm::min(2.1, 16 / (glm::length(star.position) / LIGHT_YEAR)), max = glm::max(2.1, 16 / (glm::length(star.position) / LIGHT_YEAR));
+		star.mass = random_double(min, max) * SOLAR_MASS;
 	};
+	/*init_star = [area, galaxy_thickness, initial_speed, step](Star<2>& star)
+	{
+		Float radius = (sqrt(random_double(0., 1.)) - 0.5) * area, angle = random_double(0., 2. * PI);
+
+		star.position = Vector<2>(glm::cos(angle) * radius, glm::sin(angle) * radius);
+		star.speed = glm::normalize(Vector<2>(-star.position.y, star.position.x)) * initial_speed;
+		star.previous_position = star.position - star.speed * step;
+		Float min = glm::min(2.1, 16 / (glm::length(star.position) / LIGHT_YEAR)), max = glm::max(2.1, 16 / (glm::length(star.position) / LIGHT_YEAR));
+		star.mass = random_double(min, max) * SOLAR_MASS;
+	};*/
+
+	//auto init_star = [area, galaxy_thickness, initial_speed, step](Star<3>& star) {
+
+	//	star.position = create_spherical((sqrt(random_double(0., 1.)) - 0.5) * area, random_double(0., 2. * PI), PI / 2.) * Vector3(1);
+	//	star.position.z = ((random_double(0., 1.) - 0.5) * (area * galaxy_thickness));
+	//	star.speed = glm::normalize(Vector3(-star.position.y, star.position.x, 0.)) * initial_speed;//create_spherical((((area / 2.) - glm::length(position)) / (area / 2.)) * initial_speed, get_phi(position) + PI / 2., PI / 2.);
+	//	star.previous_position = star.position - star.speed * step;
+	//	Float min = glm::min(2.1, 16 / (glm::length(star.position) / LIGHT_YEAR)), max = glm::max(2.1, 16 / (glm::length(star.position) / LIGHT_YEAR));
+	//	star.mass = random_double(min, max) * SOLAR_MASS;
+	////};
+	//auto init_star = [area, galaxy_thickness, initial_speed, step](Star<2>& star) 
+	//{
+	//	Float radius = (sqrt(random_double(0., 1.)) - 0.5) * area, angle= random_double(0., 2. * PI);
+
+	//	star.position = Vector<2>(glm::cos(angle) * radius, glm::sin(angle) * radius);
+	//	star.speed = glm::normalize(Vector<2>(-star.position.y, star.position.x)) * initial_speed;
+	//	star.previous_position = star.position - star.speed * step;
+	//	Float min = glm::min(2.1, 16 / (glm::length(star.position) / LIGHT_YEAR)), max = glm::max(2.1, 16 / (glm::length(star.position) / LIGHT_YEAR));
+	//	star.mass = random_double(min, max) * SOLAR_MASS;
+	//};
 	for (int i = 0; i < stars_number; ++i)
 	{
 		galaxy.emplace_back(init_star);
+	}
+	if (is_black_hole)
+	{
+		galaxy.emplace_back();
+		galaxy.back().mass = black_hole_mass;
+		galaxy.back().is_alive = true;
 	}
 
 	Star<nAxis>::range alive_galaxy = { galaxy.begin(), galaxy.end() };
